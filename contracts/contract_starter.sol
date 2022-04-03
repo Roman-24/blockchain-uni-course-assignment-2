@@ -25,8 +25,8 @@ contract Battleship {
     uint256 public bit;
     address public winner;
 
-    uint public timeout;
-    uint private time_limit = 1 minutes;
+    uint public timeout_stamp;
+    uint constant private _TIME_LIMIT = 1 minutes;
     address public timeout_winner;
 
     Player player1;
@@ -104,7 +104,6 @@ contract Battleship {
         require(state == 1, "Game not started");
         require(msg.sender == player1.addr || msg.sender == player2.addr, "Only players can check ships");
         require(msg.sender == owner, "Only the owner of the board can check ships");
-        require(guess_leaf_index < 2**BOARD_LEN, "Guess leaf index out of bounds");
         
         // merkle root of owner
         bytes32 owner_merkle_root = msg.sender == player1.addr ? player1.merkle_root : player2.merkle_root;
@@ -174,36 +173,88 @@ contract Battleship {
     // proof - a list of sha256 hashes you can get from get_proof_for_board_guess (this is what the sender believes to be a lie)
     // guess_leaf_index - the index of the guess as a leaf in the merkle tree
     // owner - the address of the owner of the board on which this ship lives
-    function accuse_cheating(bytes memory opening_nonce, bytes32[] memory proof,
-        uint256 guess_leaf_index, address owner) public returns (bool result) {
-        // TODO
+    function accuse_cheating(bytes memory opening_nonce, bytes32[] memory proof, uint256 guess_leaf_index, address owner) public returns (bool result) {
+            
+            require(state == 1, "Game not started");
+            require(msg.sender == player1.addr || msg.sender == player2.addr, "Only players can accuse cheating");
+            require(msg.sender == owner, "Only the owner of the board can accuse cheating");
+    
+            // merkle root of owner
+            bytes32 owner_merkle_root = msg.sender == player1.addr ? player1.merkle_root : player2.merkle_root;
+    
+            // owner leaves
+            uint256[] storage leaves = player1.leaf_check;
+            if (player1.addr == owner){
+                leaves = player1.leaf_check;
+            } else if (player2.addr == owner) {
+                leaves = player2.leaf_check;
+            }
+    
+            if (verify_opening(opening_nonce, proof, guess_leaf_index, owner_merkle_root) && leaves.length != 0){
+                for (uint256 index = 0; index < leaves.length; index++) {
+                    if (leaves[index] == guess_leaf_index) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+            return false;
     }
+
 
     // Claim the opponent of taking too long/leaving
     // Trigger an event that both players should listen for.
     function claim_opponent_left(address opponent) public {
-        // TODO
+
+        require(state == 1, "Game not started");
+        require(msg.sender == player1.addr || msg.sender == player2.addr, "Only players can claim opponent left");
+        require(opponent != address(0), "Opponent cannot be null");
+        require(opponent == player1.addr || opponent == player2.addr, "Opponent must be a player");
+
+        timeout_stamp = block.timestamp;
+        timeout_winner = opponent;
+
+        emit PlayerAccused(opponent, msg.sender);
     }
 
     // Handle a timeout accusation - msg.sender is the accused party.
     // If less than 1 minute has passed, then set state appropriately to prevent distribution of winnings.
     // Otherwise, do nothing.
     function handle_timeout(address payable opponent) public {
-        // TODO
+    
+        require(state == 1, "Game not started");
+        require(msg.sender == player1.addr || msg.sender == player2.addr, "Only players can handle timeout");
+        require(opponent != address(0), "Opponent cannot be null");
+        require(opponent == player1.addr || opponent == player2.addr, "Opponent must be a player");
+
+        if (block.timestamp - timeout_stamp < _TIME_LIMIT){
+            state = 0;
+            timeout_winner = opponent;
+        }
     }
 
     // Claim winnings if opponent took too long/stopped responding after claim_opponent_left
     // The player MUST claim winnings. The opponent failing to handle the timeout on their end should not
     // result in the game being over. If the timer has not run out, do nothing.
     function claim_timeout_winnings(address opponent) public {
-        // TODO
+            
+            require(state == 1, "Game not started");
+            require(msg.sender == player1.addr || msg.sender == player2.addr, "Only players can claim timeout winnings");
+            require(opponent != address(0), "Opponent cannot be null");
+            require(opponent == player1.addr || opponent == player2.addr, "Opponent must be a player");
+    
+            if (block.timestamp - timeout_stamp < _TIME_LIMIT){
+                state = 2;
+                winner = msg.sender;
+                msg.sender.transfer(address(this).balance);
+            }
     }
 
     // Check if game is over
     // Hint - use a state variable for this, so you can call it from JS.
     // Note - you cannot use the return values of functions that change state in JS.
     function is_game_over() public returns (bool) {
-        // TODO
+        return state == 0 || state == 2;
     }
 
     /**** Helper Functions below this point. Do not modify. ****/
