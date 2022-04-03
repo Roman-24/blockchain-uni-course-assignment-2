@@ -29,8 +29,8 @@ contract Battleship {
     uint private time_limit = 1 minutes;
     address public timeout_winner;
 
-    Player player1 = new Player();
-    Player player2 = new Player();
+    Player player1;
+    Player player2;
 
     // Declare events here.
     // Consider triggering an event upon accusing another player of having left.
@@ -86,7 +86,7 @@ contract Battleship {
 
         if (msg.sender == player1.addr){
             player1.merkle_root = merkle_root;
-        } else if (msg.sender == player2) {
+        } else if (msg.sender == player2.addr) {
             player2.merkle_root = merkle_root;
         } 
         /*else {
@@ -106,16 +106,28 @@ contract Battleship {
         require(msg.sender == owner, "Only the owner of the board can check ships");
         require(guess_leaf_index < 2**BOARD_LEN, "Guess leaf index out of bounds");
         
-        // merkle_root of the owner
+        // merkle root of owner
         bytes32 owner_merkle_root = msg.sender == player1.addr ? player1.merkle_root : player2.merkle_root;
-        // leaves of owner
-        uint256[] storage leaves = 
 
-        if (verify_opening(opening_nonce, proof, guess_leaf_index, owner_merkle_root)){
-            for (uint256 index = 0; index < array.length; index++) {
-                
-            }
+        // owner leaves
+        uint256[] storage leaves = player1.leaf_check;
+        if (player1.addr == owner){
+            leaves = player1.leaf_check;
+        } else if (player2.addr == owner) {
+            leaves = player2.leaf_check;
         }
+
+
+        if (verify_opening(opening_nonce, proof, guess_leaf_index, owner_merkle_root) && leaves.length != 0){
+            for (uint256 index = 0; index < leaves.length; index++) {
+                if (leaves[index] == guess_leaf_index) {
+                    return false;
+                }
+            }
+            leaves.push(guess_leaf_index);
+            return true;
+        }
+        return false;
     }
 
     // Claim you won the game
@@ -123,14 +135,38 @@ contract Battleship {
     // 10 of your own ship placements with the contract, then this function
     // should transfer winning funds to you and end the game.
     function claim_win() public {
-        // TODO
+
+        require(state == 1, "Game not started");
+        require(msg.sender == player1.addr || msg.sender == player2.addr, "Only players can claim win");
+
+        if (msg.sender == player1.addr){
+            if (player1.num_ships == 10 && player2.num_ships == 10){
+                winner = player1.addr;
+            }
+        } else if (msg.sender == player2.addr){
+            if (player2.num_ships == 10 && player1.num_ships == 10){
+                winner = player2.addr;
+            }
+        }
     }
 
     // Forfeit the game
     // Regardless of cheating, board state, or any other conditions, this function
     // results in all funds being sent to the opponent and the game being over.
     function forfeit(address payable opponent) public {
-        // TODO
+            
+            require(state == 1, "Game not started");
+            require(msg.sender == player1.addr || msg.sender == player2.addr, "Only players can forfeit");
+            require(opponent != address(0), "Opponent cannot be null");
+    
+            if (msg.sender == player1.addr){
+                winner = player2.addr;
+            } else if (msg.sender == player2.addr){
+                winner = player1.addr;
+            }
+    
+            opponent.transfer(address(this).balance);
+            state = 0;
     }
 
     // Claim the opponent cheated - if true, you win.
