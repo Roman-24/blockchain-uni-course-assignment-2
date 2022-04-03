@@ -10,23 +10,27 @@ contract Battleship {
     // Declare state variables here.
     // Consider keeping state for:
     // - player addresses
-    address public player1;
-    address public player2;
     // - whether the game is over
     // - board commitments
+    // - whether a player has proven 10 winning moves
+    // - whether a player has proven their own board had 10 ships
+    struct Player {
+        address addr;
+        bytes32 merkle_root;
+        uint32 num_ships;
+        uint256[] leaf_check;
+    }
+
     uint8 state;
     uint256 public bit;
     address public winner;
-    // - whether a player has proven 10 winning moves
-    bytes32 public player1_merkle_root;
-    bytes32 public player2_merkle_root;
-    // - whether a player has proven their own board had 10 ships
-    uint32 public player1_num_ships;
-    uint32 public player2_num_ships;
 
     uint public timeout;
     uint private time_limit = 1 minutes;
     address public timeout_winner;
+
+    Player player1 = new Player();
+    Player player2 = new Player();
 
     // Declare events here.
     // Consider triggering an event upon accusing another player of having left.
@@ -40,40 +44,54 @@ contract Battleship {
     // Refund excess bids to the second player if they bid too much.
     function store_bid() public payable{
 
-        require(player1 == address(0) || player2 == address(0), "Game already started");
+        require(player1.addr == address(0) || player2.addr == address(0), "Game already started");
         require(state == 0, "Game already started");
 
-        if (player1 == address(0)){
+        if (player1.addr == address(0)){
             // TODO moze byt bit nula ?
             require(msg.value >= 0, "Bid must be positive");
-            player1 = msg.sender;
+            player1.addr = msg.sender;
             bit = msg.value;
             state = 1;
-        } else if (player2 == address(0)) {
+        } else if (player2.addr == address(0)) {
             require(msg.value >= bit && msg.value >= 0, "Bid must be greater than previous bid");
-            require(msg.sender != player1, "Player cannot bid on their own bid");
-            player2 = msg.sender;
+            require(msg.sender != player1.addr, "Player cannot bid on their own bid");
+            player2.addr = msg.sender;
             state = 1;
         }
     }
 
     // Clear state - make sure to set that the game is not in session
     function clear_state() internal{
-        player1 = address(0);
-        player2 = address(0);
+
+        player1.addr = address(0);
+        player1.merkle_root = bytes32(0);
+
+        player2.addr = address(0);
+        player2.merkle_root = bytes32(0);
+
         winner = address(0);
         bit = 0;
         state = 0;
-
-        player1_merkle_root = bytes32(0);
-        player2_merkle_root = bytes32(0);
 
     }
 
     // Store the initial board commitments of each player
     // Note that merkle_root is the hash of the topmost value of the merkle tree
-    function store_board_commitment(bytes32 merkle_root) public {
-        // TODO
+    function store_board_commitment(bytes32 merkle_root) public{
+
+        require(state == 1, "Game not started");
+        require(msg.sender == player1.addr || msg.sender == player2.addr, "Only players can store board commitments");
+        require(msg.sender == player1.addr ? player1.merkle_root == bytes32(0) : player2.merkle_root == bytes32(0), "Board commitment already stored");
+
+        if (msg.sender == player1.addr){
+            player1.merkle_root = merkle_root;
+        } else if (msg.sender == player2) {
+            player2.merkle_root = merkle_root;
+        } 
+        /*else {
+            revert();
+        }*/
     }
 
     // Verify the placement of one ship on a board
@@ -81,9 +99,23 @@ contract Battleship {
     // proof - a list of sha256 hashes you can get from get_proof_for_board_guess
     // guess_leaf_index - the index of the guess as a leaf in the merkle tree
     // owner - the address of the owner of the board on which this ship lives
-    function check_one_ship(bytes memory opening_nonce, bytes32[] memory proof,
-        uint256 guess_leaf_index, address owner) public returns (bool result) {
-        // TODO
+    function check_one_ship(bytes memory opening_nonce, bytes32[] memory proof, uint256 guess_leaf_index, address owner) public returns (bool result) {
+
+        require(state == 1, "Game not started");
+        require(msg.sender == player1.addr || msg.sender == player2.addr, "Only players can check ships");
+        require(msg.sender == owner, "Only the owner of the board can check ships");
+        require(guess_leaf_index < 2**BOARD_LEN, "Guess leaf index out of bounds");
+        
+        // merkle_root of the owner
+        bytes32 owner_merkle_root = msg.sender == player1.addr ? player1.merkle_root : player2.merkle_root;
+        // leaves of owner
+        uint256[] storage leaves = 
+
+        if (verify_opening(opening_nonce, proof, guess_leaf_index, owner_merkle_root)){
+            for (uint256 index = 0; index < array.length; index++) {
+                
+            }
+        }
     }
 
     // Claim you won the game
