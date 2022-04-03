@@ -4,7 +4,7 @@
 // =============================================================================
 //                                EDIT THIS FILE
 // =============================================================================
-//      written by: [your name]
+//      written by: [Roman Bitarovský]
 // #############################################################################
 
 // sets up web3.js
@@ -12,13 +12,329 @@ let web3 = new Web3(Web3.givenProvider || "ws://localhost:7545");
 
 // This is the ABI for your contract (get it from Truffle, from 'bin' folder, or from Remix, in the 'Compile' tab )
 // ============================================================
-var abi = []; // TODO: replace this with your contract's ABI
+var abi = [
+	{
+		"inputs": [
+			{
+				"internalType": "bytes",
+				"name": "opening_nonce",
+				"type": "bytes"
+			},
+			{
+				"internalType": "bytes32[]",
+				"name": "proof",
+				"type": "bytes32[]"
+			},
+			{
+				"internalType": "uint256",
+				"name": "guess_leaf_index",
+				"type": "uint256"
+			},
+			{
+				"internalType": "address",
+				"name": "owner",
+				"type": "address"
+			}
+		],
+		"name": "accuse_cheating",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "result",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "opponent",
+				"type": "address"
+			}
+		],
+		"name": "claim_opponent_left",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "opponent",
+				"type": "address"
+			}
+		],
+		"name": "claim_timeout_winnings",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "claim_win",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address payable",
+				"name": "opponent",
+				"type": "address"
+			}
+		],
+		"name": "forfeit",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address payable",
+				"name": "opponent",
+				"type": "address"
+			}
+		],
+		"name": "handle_timeout",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "bytes",
+				"name": "opening_nonce",
+				"type": "bytes"
+			},
+			{
+				"internalType": "bytes32[]",
+				"name": "proof",
+				"type": "bytes32[]"
+			},
+			{
+				"internalType": "uint256",
+				"name": "guess_leaf_index",
+				"type": "uint256"
+			},
+			{
+				"internalType": "address",
+				"name": "owner",
+				"type": "address"
+			}
+		],
+		"name": "check_one_ship",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "result",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "is_game_over",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "accuser",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "address",
+				"name": "sender",
+				"type": "address"
+			}
+		],
+		"name": "PlayerAccused",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "player",
+				"type": "address"
+			}
+		],
+		"name": "PlayerJoined",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "player",
+				"type": "address"
+			}
+		],
+		"name": "PlayerLeft",
+		"type": "event"
+	},
+	{
+		"inputs": [],
+		"name": "store_bid",
+		"outputs": [],
+		"stateMutability": "payable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "bytes32",
+				"name": "merkle_root",
+				"type": "bytes32"
+			}
+		],
+		"name": "store_board_commitment",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "bit",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "bytes32",
+				"name": "a",
+				"type": "bytes32"
+			},
+			{
+				"internalType": "bytes32",
+				"name": "b",
+				"type": "bytes32"
+			}
+		],
+		"name": "merge_bytes32",
+		"outputs": [
+			{
+				"internalType": "bytes",
+				"name": "",
+				"type": "bytes"
+			}
+		],
+		"stateMutability": "pure",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "timeout_stamp",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "timeout_winner",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "bytes",
+				"name": "opening_nonce",
+				"type": "bytes"
+			},
+			{
+				"internalType": "bytes32[]",
+				"name": "proof",
+				"type": "bytes32[]"
+			},
+			{
+				"internalType": "uint256",
+				"name": "guess_leaf_index",
+				"type": "uint256"
+			},
+			{
+				"internalType": "bytes32",
+				"name": "commit",
+				"type": "bytes32"
+			}
+		],
+		"name": "verify_opening",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "result",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "winner",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	}
+]; // TODO: replace this with your contract's ABI
 // ============================================================
 abiDecoder.addABI(abi);
 
 // This is the address of the contract you want to connect to; copy this from Remix
 // TODO: fill this in with your contract's address/hash
-let contractAddress = "0x3Ca....";
+let contractAddress = "0x6601ef9090EE071902FB77Da851469787B19fFe9";
 
 // Reads in the ABI
 var Battleship = new web3.eth.Contract(abi, contractAddress);
@@ -48,7 +364,25 @@ class BattleshipPlayer {
 		//			(see the spec for an example of how to do this)
     // ##############################################################################
 		// Your code here
-		console.log("Not implemented");
+
+    this.opponent_board = new Array();
+    //iterate opponent board and create 2d array
+    for(var i = 0; i < BOARD_LEN; i++){
+      this.opponent_board[i] = new Array();
+      for(var j = 0; j < BOARD_LEN; j++){
+        this.opponent_board[i][j] = 0;
+      }
+    }
+
+    //register a event from the smart contract.
+    Battleship.events.PlayerAccused({filter: {defendant: this.my_addr}, fromBlock: 0}, (error, event) => {
+      console.log(event);
+      if(error){
+        console.log(error);
+      }
+      // alert maybe
+    });
+		//console.log("Not implemented");
   }
 
 	async place_bet(ante) {
@@ -58,7 +392,11 @@ class BattleshipPlayer {
 		//					wei = eth*10**18
     // ##############################################################################
 		// Your code here
-		console.log("Not implemented");
+    let ante_wei = ante * 10 ** 18;
+		console.log("place_bet");
+		console.log(ante_wei);
+		Battleship.methods.store_bid().send({from: this.my_addr, value: ante_wei, gas: 3141592});
+		// console.log("Not implemented");
 	}
 
   /* initialize_board
@@ -92,6 +430,7 @@ class BattleshipPlayer {
     //    TODO store the board commitment in the contract
     // ##############################################################################
 		// Your code here
+    Battleship.methods.store_board_commitment(commit).send({from: this.my_addr, gas: 3141592});
 
     return [commit, sig];
   }
