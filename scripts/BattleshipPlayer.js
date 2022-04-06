@@ -392,11 +392,11 @@ class BattleshipPlayer {
 		//					wei = eth*10**18
     // ##############################################################################
 		// Your code here
-    let ante_wei = ante * 10 ** 18;
+		// console.log("Not implemented");
+    	let ante_wei = ante * 10 ** 18;
 		console.log("place_bet");
 		console.log(ante_wei);
 		Battleship.methods.store_bid().send({from: this.my_addr, value: ante_wei, gas: 3141592});
-		// console.log("Not implemented");
 	}
 
   /* initialize_board
@@ -407,30 +407,30 @@ class BattleshipPlayer {
       initialize_board - [[bool]] - array of arrays where true represents a ship's presense
       callback - callback to call with commitment as argument
   */
-  async initialize_board(initial_board) {
-    this.my_board = initial_board;
+  	async initialize_board(initial_board) {
+		this.my_board = initial_board;
 
-		// Store the positions of your ten ships locally, so you can prove it if you win
-		for (var i = 0; i < BOARD_LEN; i++) {
-			for (var j = 0; j < BOARD_LEN; j++) {
-				if (this.my_board[i][j]) {
-					this.my_ships.push([i,j]);
+			// Store the positions of your ten ships locally, so you can prove it if you win
+			for (var i = 0; i < BOARD_LEN; i++) {
+				for (var j = 0; j < BOARD_LEN; j++) {
+					if (this.my_board[i][j]) {
+						this.my_ships.push([i,j]);
+					}
 				}
 			}
-		}
 
-    // set nonces to build our commitment with
-    this.nonces = get_nonces(); // get_nonces defined in util.js
-    // build commitment to our board
-    const commit = build_board_commitment(this.my_board, this.nonces); // build_board_commitment defined in util.js
-    // sign this commitment
-    const sig = sign_msg(commit, this.my_addr);
+		// set nonces to build our commitment with
+		this.nonces = get_nonces(); // get_nonces defined in util.js
+		// build commitment to our board
+		const commit = build_board_commitment(this.my_board, this.nonces); // build_board_commitment defined in util.js
+		// sign this commitment
+		const sig = sign_msg(commit, this.my_addr);
 
+			// ##############################################################################
+		//    TODO store the board commitment in the contract
 		// ##############################################################################
-    //    TODO store the board commitment in the contract
-    // ##############################################################################
-		// Your code here
-    Battleship.methods.store_board_commitment(commit).send({from: this.my_addr, gas: 3141592});
+			// Your code here
+		Battleship.methods.store_board_commitment(commit).send({from: this.my_addr, gas: 3141592});
 
     return [commit, sig];
   }
@@ -518,6 +518,41 @@ class BattleshipPlayer {
 		//	  Hint: What arguments do you need to pass to the contract to check a ship?
     // ##############################################################################
 		// Your code here
+		if(this.opponent_board[i][j] != 0){
+			console.log("This position in the opponent's board has been hit before");
+			return;
+		  }
+		  
+		  this.last_received_response = response;
+		  this.last_guest_leaf_index = i * BOARD_LEN + j;
+	  
+		  //check if I can check a ship
+		  if(opening == true) {//hit the ship
+			  //call the contract to check a ship
+			  var opening_nonce = web3.utils.fromAscii(JSON.stringify(opening) + JSON.stringify(nonce));
+			  let index_of_guess_in_leaves = i * BOARD_LEN + j;
+	  
+			  console.log("check_one_ship");
+			  console.log(opening_nonce);
+			  console.log(proof);
+			  console.log(index_of_guess_in_leaves);
+			  console.log(this.opp_addr);
+			  var check_ship_promise = Battleship.methods.check_one_ship(
+				  opening_nonce,
+				  proof,
+				  index_of_guess_in_leaves,
+				  this.opp_addr).send({from: this.my_addr, gas: 3141592});
+	  
+			  // var check_ship_promise = new Promise(function(){});
+	  
+			  check_ship_promise.then(() => {
+				  this.opponent_board[i][j] = 2;
+			  });
+			
+		  }else{//miss the target ship
+			this.opponent_board[i][j] = 1;
+		  }
+
   }
 
 
@@ -527,7 +562,8 @@ class BattleshipPlayer {
 		//	  - Called when you press "Accuse Timeout"
     // ##############################################################################
 		// Your code here
-		console.log("Not implemented");
+		//console.log("Not implemented");
+		Battleship.methods.claim_opponent_left(this.opp_addr).send({from: this.my_addr, gas: 3141592});
   }
 
 	async handle_timeout_accusation() {
@@ -537,7 +573,9 @@ class BattleshipPlayer {
 		// 		- Returns true if the game is over
     // ##############################################################################
 		// Your code here
-		console.log("Not implemented");
+		//console.log("Not implemented");
+		var timeout_promise = Battleship.methods.handle_timeout(this.opp_addr).send({from: this.my_addr, gas: 3141592});
+		return timeout_promise.then(Battleship.methods.is_game_over().send({from: this.my_addr}));
   }
 
 	/* claim_timeout
@@ -553,7 +591,9 @@ class BattleshipPlayer {
 		// 		- Returns true if game is over
     // ##############################################################################
 		// Your code here
-		console.log("Not implemented");
+		//console.log("Not implemented");
+		var timeout_promise = Battleship.methods.claim_timeout_winnings(this.opp_addr).send({from: this.my_addr, gas: 3141592});
+		return timeout_promise.then(Battleship.methods.is_game_over().send({from: this.my_addr}));
 	}
 
 	/*
@@ -569,7 +609,16 @@ class BattleshipPlayer {
 		//		- For this project, the proof should always verify (the opponent will never lie).
     // ##############################################################################
 		// Your code here
-		console.log("Not implemented");
+		//console.log("Not implemented");
+		let [opening, nonce, proof] = this.last_received_response;
+		var opening_nonce = web3.utils.fromAscii(JSON.stringify(opening) + JSON.stringify(nonce));
+		let index_of_guess_in_leaves = this.last_guest_leaf_index;
+
+		var accuse_cheating_promise = Battleship.methods.accuse_cheating(
+			opening_nonce,
+			proof,
+			index_of_guess_in_leaves,
+			this.opp_addr).send({from: this.my_addr, gas: 3141592});
 	}
 
 	/*
@@ -586,7 +635,9 @@ class BattleshipPlayer {
 		//			web3.utils.fromAscii(JSON.stringify(opening) + JSON.stringify(nonce))
     // ##############################################################################
 		// Your code here
-		console.log("Not implemented");
+		//console.log("Not implemented");
+		Battleship.methods.claim_win().send({from: this.my_addr});
+		var retrieve = await Battleship.methods.is_game_over().call();
 	}
 
 	/*
@@ -599,6 +650,8 @@ class BattleshipPlayer {
 		//		- Call solidity to give up your bid to the other player and end the game.
 		// ##############################################################################
 		// Your code here
-		console.log("Not implemented");
+		//console.log("Not implemented");
+		console.log("Forfeit game");
+		Battleship.methods.forfeit(this.opp_addr).send({from: this.my_addr, gas: 3141592});
 	}
 }
