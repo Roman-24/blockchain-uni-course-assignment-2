@@ -62,7 +62,6 @@ contract Battleship {
             if (msg.value > bit){
                 msg.sender.transfer(msg.value - bit);
             }
-
         }
     }
 
@@ -205,21 +204,15 @@ contract Battleship {
 
         // merkle root of owner
         bytes32 owner_merkle_root = player1.merkle_root;
-        // owner leaves
-        uint256[] storage leaves = player1.leaf_check;
 
         if (player2.addr == owner) {
             owner_merkle_root = player2.merkle_root;
-            leaves = player2.leaf_check;
         }
 
-        if (verify_opening(opening_nonce, proof, guess_leaf_index, owner_merkle_root) && leaves.length != 0){
-            for (uint256 index = 0; index < leaves.length; index++) {
-                if (leaves[index] == guess_leaf_index) {
-                    return true;
-                }
-            }
-            return false;
+        if (verify_opening(opening_nonce, proof, guess_leaf_index, owner_merkle_root) == false){
+            msg.sender.transfer(address(this).balance);
+            clear_state();
+            return true;
         }
         return false;  
     }
