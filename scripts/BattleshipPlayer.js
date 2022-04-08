@@ -269,19 +269,6 @@ var abi = [
 		"type": "function"
 	},
 	{
-		"inputs": [],
-		"name": "timeout_winner",
-		"outputs": [
-			{
-				"internalType": "address",
-				"name": "",
-				"type": "address"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
 		"inputs": [
 			{
 				"internalType": "bytes",
@@ -320,7 +307,7 @@ var abi = [
 		"name": "winner",
 		"outputs": [
 			{
-				"internalType": "address",
+				"internalType": "address payable",
 				"name": "",
 				"type": "address"
 			}
@@ -334,7 +321,7 @@ abiDecoder.addABI(abi);
 
 // This is the address of the contract you want to connect to; copy this from Remix
 // TODO: fill this in with your contract's address/hash
-let contractAddress = "0x95D29Dbfb51f9BfB4b0342596BB06C708C174E83";
+let contractAddress = "0xcF49b421f2d811B167eB1A745988c943805cEaB0";
 
 // Reads in the ABI
 var Battleship = new web3.eth.Contract(abi, contractAddress);
@@ -641,7 +628,7 @@ class BattleshipPlayer {
     // ##############################################################################
 		// Your code here
 		//console.log("Not implemented");
-		Battleship.methods.claim_win().send({from: this.my_addr});
+		Battleship.methods.claim_win().send({from: this.my_addr, gas: 3141592});
 		var retrieve = await Battleship.methods.is_game_over().call();
 	}
 

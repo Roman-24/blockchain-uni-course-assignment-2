@@ -15,7 +15,7 @@ contract Battleship {
     // - whether a player has proven 10 winning moves
     // - whether a player has proven their own board had 10 ships
     struct Player {
-        address addr;
+        address payable addr;
         bytes32 merkle_root;
         uint32 num_ships;
         uint256[] leaf_check;
@@ -26,11 +26,9 @@ contract Battleship {
     // 2 -> game is over
     uint8 state = 0;
     uint256 public bit;
-    address public winner;
-
     uint public timeout_stamp;
     uint constant private _TIME_LIMIT = 1 minutes;
-    address public timeout_winner;
+    address payable public winner;
 
     Player player1;
     Player player2;
@@ -79,9 +77,14 @@ contract Battleship {
         player2.addr = address(0);
         player2.merkle_root = bytes32(0);
 
-        winner = address(0);
+        delete player1.leaf_check;
+        delete player2.leaf_check;
+
         bit = 0;
         state = 0;
+
+        timeout_stamp = 0;
+        winner = address(0);    
     }
 
     // Store the initial board commitments of each player
@@ -115,7 +118,9 @@ contract Battleship {
         require(msg.sender == player1.addr || msg.sender == player2.addr, "check_one_ship: Only players can check ships");
         require(owner == player1.addr || owner == player2.addr, "check_one_ship: Owner must be a player");
         require(guess_leaf_index < 2**BOARD_LEN, "check_one_ship: Guess leaf index out of bounds");
-        
+
+        // num of ships for this player
+        uint32 num_ships = player1.num_ships;
         // merkle root of owner
         bytes32 owner_merkle_root = player1.merkle_root;
         // owner leaves
@@ -124,16 +129,21 @@ contract Battleship {
         if (player2.addr == owner) {
             owner_merkle_root = player2.merkle_root;
             leaves = player2.leaf_check;
+            num_ships = player2.num_ships;
         }
 
 
         if (verify_opening(opening_nonce, proof, guess_leaf_index, owner_merkle_root) && leaves.length != 0){
+
             for (uint256 index = 0; index < leaves.length; index++) {
                 if (leaves[index] == guess_leaf_index) {
                     return false;
                 }
             }
             leaves.push(guess_leaf_index);
+            if (num_ships < 10) {
+                num_ships++;
+            }
             return true;
         }
         return false;
@@ -148,18 +158,21 @@ contract Battleship {
         require(state == 1, "claim_win: Game is not in session");
         require(msg.sender == player1.addr || msg.sender == player2.addr, "claim_win: Only players can claim win");
 
-        if (msg.sender == player1.addr){
-            if (player1.num_ships == 10 && player2.num_ships == 10){
+        // chech who is the winner of the game
+        winner = msg.sender == player1.addr ? player2.addr : player1.addr;
+
+        if (msg.sender == player1.addr) {
+            if (player1.leaf_check.length == 10){
                 winner = player1.addr;
             }
-        } else if (msg.sender == player2.addr){
-            if (player2.num_ships == 10 && player1.num_ships == 10){
+        } 
+        else if (msg.sender == player2.addr) {
+            if (player2.leaf_check.length == 10){
                 winner = player2.addr;
             }
         }
 
-        // transfer funds to winner
-        msg.sender.transfer(address(this).balance);
+        winner.transfer(address(this).balance);
         state = 2;
         clear_state();
     }
@@ -172,7 +185,6 @@ contract Battleship {
         require(state == 1, "forfeit: Game not started");
         require(msg.sender == player1.addr || msg.sender == player2.addr, "forfeit: Only players can forfeit");
         require(opponent != address(0), "forfeit: Opponent cannot be null");
-        // require(opponent != msg.sender, "Cannot forfeit on your own turn");
 
         opponent.transfer(address(this).balance);
         state = 2;
@@ -188,7 +200,7 @@ contract Battleship {
             
         require(state == 1, "accuse_cheating: Game is not in session");
         require(msg.sender == player1.addr || msg.sender == player2.addr, "accuse_cheating: Only players can accuse cheating");
-        require(msg.sender == owner, "accuse_cheating: Only the owner of the board can accuse cheating");
+        // require(msg.sender == owner, "accuse_cheating: Only the owner of the board can accuse cheating");
         require(guess_leaf_index < 2**BOARD_LEN, "accuse_cheating: Guess leaf index out of bounds");
 
         // merkle root of owner
@@ -223,7 +235,7 @@ contract Battleship {
         require(opponent == player1.addr || opponent == player2.addr, "claim_opponent_left: Opponent must be a player");
 
         timeout_stamp = block.timestamp;
-        timeout_winner = opponent;
+        winner = payable(opponent);
 
         emit PlayerAccused(opponent, msg.sender);
     }
@@ -234,12 +246,12 @@ contract Battleship {
     function handle_timeout(address payable opponent) public {
     
         require(state == 1, "handle_timeout: Game is not in session");
-        require(msg.sender == timeout_winner, "handle_timeout: Only the winner of the timeout can handle the timeout");
+        require(msg.sender == winner, "handle_timeout: Only the winner of the timeout can handle the timeout");
         require(opponent != address(0), "handle_timeout: Opponent cannot be null");
         require(opponent == player1.addr || opponent == player2.addr, "handle_timeout: Opponent must be a player");
 
-        if (block.timestamp - timeout_stamp < _TIME_LIMIT){
-            timeout_winner = opponent;
+        if (block.timestamp - timeout_stamp < _TIME_LIMIT && timeout_stamp != 0){
+            timeout_stamp = 0;
         }
     }
 
@@ -253,9 +265,8 @@ contract Battleship {
         require(opponent != address(0), "claim_timeout_winnings: Opponent cannot be null");
         require(opponent == player1.addr || opponent == player2.addr, "claim_timeout_winnings: Opponent must be a player");
 
-        if (block.timestamp - timeout_stamp < _TIME_LIMIT){
+        if (block.timestamp - timeout_stamp > _TIME_LIMIT && timeout_stamp != 0){
             state = 2;
-            winner = msg.sender;
             msg.sender.transfer(address(this).balance);
             clear_state();
         }
