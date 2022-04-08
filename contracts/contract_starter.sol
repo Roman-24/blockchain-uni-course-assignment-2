@@ -21,7 +21,10 @@ contract Battleship {
         uint256[] leaf_check;
     }
 
-    uint8 state;
+    // 0 -> game not starte
+    // 1 -> game started and is in progress
+    // 2 -> game is over
+    uint8 state = 0;
     uint256 public bit;
     address public winner;
 
@@ -48,21 +51,27 @@ contract Battleship {
         require(state == 0, "Game already started");
 
         if (player1.addr == address(0)){
-            // TODO moze byt bit nula ?
-            require(msg.value >= 0, "Bid must be positive");
+            require(msg.value > 0, "Bid must be positive");
             player1.addr = msg.sender;
             bit = msg.value;
-            state = 1;
+
         } else if (player2.addr == address(0)) {
-            require(msg.value >= bit && msg.value >= 0, "Bid must be greater than previous bid");
+            require(msg.value >= bit && msg.value >= 0, "Bid must be greater or equivalent than previous bid");
             require(msg.sender != player1.addr, "Player cannot bid on their own bid");
             player2.addr = msg.sender;
-            state = 1;
+
+            // if bit from palyer2 is more than bit from player1, refund excess to player2
+            if (msg.value > bit){
+                msg.sender.transfer(msg.value - bit);
+            }
+
         }
     }
 
     // Clear state - make sure to set that the game is not in session
     function clear_state() internal{
+
+        require(state != 1, "Game is in the session");
 
         player1.addr = address(0);
         player1.merkle_root = bytes32(0);
@@ -73,14 +82,13 @@ contract Battleship {
         winner = address(0);
         bit = 0;
         state = 0;
-
     }
 
     // Store the initial board commitments of each player
     // Note that merkle_root is the hash of the topmost value of the merkle tree
     function store_board_commitment(bytes32 merkle_root) public{
 
-        require(state == 1, "Game not started");
+        require(state == 0, "Game is not in session");
         require(msg.sender == player1.addr || msg.sender == player2.addr, "Only players can store board commitments");
         require(msg.sender == player1.addr ? player1.merkle_root == bytes32(0) : player2.merkle_root == bytes32(0), "Board commitment already stored");
 
@@ -89,9 +97,11 @@ contract Battleship {
         } else if (msg.sender == player2.addr) {
             player2.merkle_root = merkle_root;
         } 
-        /*else {
-            revert();
-        }*/
+        
+        // if both players have committed, start the game
+        if (player1.merkle_root != bytes32(0) && player2.merkle_root != bytes32(0)){
+            state = 1;
+        }
     }
 
     // Verify the placement of one ship on a board
@@ -101,18 +111,18 @@ contract Battleship {
     // owner - the address of the owner of the board on which this ship lives
     function check_one_ship(bytes memory opening_nonce, bytes32[] memory proof, uint256 guess_leaf_index, address owner) public returns (bool result) {
 
-        require(state == 1, "Game not started");
+        require(state == 1, "Game is not in session");
         require(msg.sender == player1.addr || msg.sender == player2.addr, "Only players can check ships");
-        require(msg.sender == owner, "Only the owner of the board can check ships");
+        require(owner == player1.addr || owner == player2.addr, "Owner must be a player");
+        require(guess_leaf_index < 2**BOARD_LEN, "Guess leaf index out of bounds");
         
         // merkle root of owner
-        bytes32 owner_merkle_root = msg.sender == player1.addr ? player1.merkle_root : player2.merkle_root;
-
+        bytes32 owner_merkle_root = player1.merkle_root;
         // owner leaves
         uint256[] storage leaves = player1.leaf_check;
-        if (player1.addr == owner){
-            leaves = player1.leaf_check;
-        } else if (player2.addr == owner) {
+
+        if (player2.addr == owner) {
+            owner_merkle_root = player2.merkle_root;
             leaves = player2.leaf_check;
         }
 
@@ -135,7 +145,7 @@ contract Battleship {
     // should transfer winning funds to you and end the game.
     function claim_win() public {
 
-        require(state == 1, "Game not started");
+        require(state == 1, "Game is not in session");
         require(msg.sender == player1.addr || msg.sender == player2.addr, "Only players can claim win");
 
         if (msg.sender == player1.addr){
@@ -147,6 +157,11 @@ contract Battleship {
                 winner = player2.addr;
             }
         }
+
+        // transfer funds to winner
+        msg.sender.transfer(address(this).balance);
+        state = 2;
+        clear_state();
     }
 
     // Forfeit the game
@@ -154,18 +169,14 @@ contract Battleship {
     // results in all funds being sent to the opponent and the game being over.
     function forfeit(address payable opponent) public {
             
-            require(state == 1, "Game not started");
-            require(msg.sender == player1.addr || msg.sender == player2.addr, "Only players can forfeit");
-            require(opponent != address(0), "Opponent cannot be null");
-    
-            if (msg.sender == player1.addr){
-                winner = player2.addr;
-            } else if (msg.sender == player2.addr){
-                winner = player1.addr;
-            }
-    
-            opponent.transfer(address(this).balance);
-            state = 0;
+        require(state == 1, "Game not started");
+        require(msg.sender == player1.addr || msg.sender == player2.addr, "Only players can forfeit");
+        require(opponent != address(0), "Opponent cannot be null");
+        // require(opponent != msg.sender, "Cannot forfeit on your own turn");
+
+        opponent.transfer(address(this).balance);
+        state = 2;
+        clear_state();
     }
 
     // Claim the opponent cheated - if true, you win.
@@ -175,30 +186,30 @@ contract Battleship {
     // owner - the address of the owner of the board on which this ship lives
     function accuse_cheating(bytes memory opening_nonce, bytes32[] memory proof, uint256 guess_leaf_index, address owner) public returns (bool result) {
             
-            require(state == 1, "Game not started");
-            require(msg.sender == player1.addr || msg.sender == player2.addr, "Only players can accuse cheating");
-            require(msg.sender == owner, "Only the owner of the board can accuse cheating");
-    
-            // merkle root of owner
-            bytes32 owner_merkle_root = msg.sender == player1.addr ? player1.merkle_root : player2.merkle_root;
-    
-            // owner leaves
-            uint256[] storage leaves = player1.leaf_check;
-            if (player1.addr == owner){
-                leaves = player1.leaf_check;
-            } else if (player2.addr == owner) {
-                leaves = player2.leaf_check;
-            }
-    
-            if (verify_opening(opening_nonce, proof, guess_leaf_index, owner_merkle_root) && leaves.length != 0){
-                for (uint256 index = 0; index < leaves.length; index++) {
-                    if (leaves[index] == guess_leaf_index) {
-                        return true;
-                    }
+        require(state == 1, "Game is not in session");
+        require(msg.sender == player1.addr || msg.sender == player2.addr, "Only players can accuse cheating");
+        require(msg.sender == owner, "Only the owner of the board can accuse cheating");
+        require(guess_leaf_index < 2**BOARD_LEN, "Guess leaf index out of bounds");
+
+        // merkle root of owner
+        bytes32 owner_merkle_root = player1.merkle_root;
+        // owner leaves
+        uint256[] storage leaves = player1.leaf_check;
+
+        if (player2.addr == owner) {
+            owner_merkle_root = player2.merkle_root;
+            leaves = player2.leaf_check;
+        }
+
+        if (verify_opening(opening_nonce, proof, guess_leaf_index, owner_merkle_root) && leaves.length != 0){
+            for (uint256 index = 0; index < leaves.length; index++) {
+                if (leaves[index] == guess_leaf_index) {
+                    return true;
                 }
-                return false;
             }
             return false;
+        }
+        return false;  
     }
 
 
@@ -206,7 +217,7 @@ contract Battleship {
     // Trigger an event that both players should listen for.
     function claim_opponent_left(address opponent) public {
 
-        require(state == 1, "Game not started");
+        require(state == 1, "Game is not in session");
         require(msg.sender == player1.addr || msg.sender == player2.addr, "Only players can claim opponent left");
         require(opponent != address(0), "Opponent cannot be null");
         require(opponent == player1.addr || opponent == player2.addr, "Opponent must be a player");
@@ -222,13 +233,12 @@ contract Battleship {
     // Otherwise, do nothing.
     function handle_timeout(address payable opponent) public {
     
-        require(state == 1, "Game not started");
-        require(msg.sender == player1.addr || msg.sender == player2.addr, "Only players can handle timeout");
+        require(state == 1, "Game is not in session");
+        require(msg.sender == timeout_winner, "Only the winner of the timeout can handle the timeout");
         require(opponent != address(0), "Opponent cannot be null");
         require(opponent == player1.addr || opponent == player2.addr, "Opponent must be a player");
 
         if (block.timestamp - timeout_stamp < _TIME_LIMIT){
-            state = 0;
             timeout_winner = opponent;
         }
     }
@@ -238,16 +248,17 @@ contract Battleship {
     // result in the game being over. If the timer has not run out, do nothing.
     function claim_timeout_winnings(address opponent) public {
             
-            require(state == 1, "Game not started");
-            require(msg.sender == player1.addr || msg.sender == player2.addr, "Only players can claim timeout winnings");
-            require(opponent != address(0), "Opponent cannot be null");
-            require(opponent == player1.addr || opponent == player2.addr, "Opponent must be a player");
-    
-            if (block.timestamp - timeout_stamp < _TIME_LIMIT){
-                state = 2;
-                winner = msg.sender;
-                msg.sender.transfer(address(this).balance);
-            }
+        require(state == 1, "Game is not in session");
+        require(msg.sender == player1.addr || msg.sender == player2.addr, "Only players can claim timeout winnings");
+        require(opponent != address(0), "Opponent cannot be null");
+        require(opponent == player1.addr || opponent == player2.addr, "Opponent must be a player");
+
+        if (block.timestamp - timeout_stamp < _TIME_LIMIT){
+            state = 2;
+            winner = msg.sender;
+            msg.sender.transfer(address(this).balance);
+            clear_state();
+        }
     }
 
     // Check if game is over
