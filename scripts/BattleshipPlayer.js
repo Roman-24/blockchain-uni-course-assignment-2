@@ -334,7 +334,7 @@ abiDecoder.addABI(abi);
 
 // This is the address of the contract you want to connect to; copy this from Remix
 // TODO: fill this in with your contract's address/hash
-let contractAddress = "0x6601ef9090EE071902FB77Da851469787B19fFe9";
+let contractAddress = "0x95D29Dbfb51f9BfB4b0342596BB06C708C174E83";
 
 // Reads in the ABI
 var Battleship = new web3.eth.Contract(abi, contractAddress);
@@ -365,6 +365,11 @@ class BattleshipPlayer {
     // ##############################################################################
 		// Your code here
 
+	this.last = null; //Last opponents response/guess for accuse_cheating
+	this.lleaf = 0; // Last leaf for accuse_cheating
+	this.my_ships = [];
+	this.hits = [];
+
     this.opponent_board = new Array();
     //iterate opponent board and create 2d array
     for(var i = 0; i < BOARD_LEN; i++){
@@ -374,6 +379,7 @@ class BattleshipPlayer {
       }
     }
 
+	//console.log("Not implemented");
     //register a event from the smart contract.
     Battleship.events.PlayerAccused({filter: {defendant: this.my_addr}, fromBlock: 0}, (error, event) => {
       console.log(event);
@@ -382,7 +388,6 @@ class BattleshipPlayer {
       }
       // alert maybe
     });
-		//console.log("Not implemented");
   }
 
 	async place_bet(ante) {
