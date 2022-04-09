@@ -88,8 +88,7 @@ contract Battleship {
 
     // Store the initial board commitments of each player
     // Note that merkle_root is the hash of the topmost value of the merkle tree
-    function store_board_commitment(bytes32 merkle_root) public{
-
+    function store_board_commitment(bytes32 merkle_root) public {
         require(state == 0, "store_board_commitment: Game is not in session");
         require(msg.sender == player1.addr || msg.sender == player2.addr, "store_board_commitment: Only players can store board commitments");
         require(msg.sender == player1.addr ? player1.merkle_root == bytes32(0) : player2.merkle_root == bytes32(0), "store_board_commitment: Board commitment already stored");
@@ -131,8 +130,7 @@ contract Battleship {
             num_ships = player2.num_ships;
         }
 
-
-        if (verify_opening(opening_nonce, proof, guess_leaf_index, owner_merkle_root) && leaves.length != 0){
+        if (verify_opening(opening_nonce, proof, guess_leaf_index, owner_merkle_root)){
 
             for (uint256 index = 0; index < leaves.length; index++) {
                 if (leaves[index] == guess_leaf_index) {
@@ -184,6 +182,7 @@ contract Battleship {
         require(state == 1, "forfeit: Game not started");
         require(msg.sender == player1.addr || msg.sender == player2.addr, "forfeit: Only players can forfeit");
         require(opponent != address(0), "forfeit: Opponent cannot be null");
+        require(opponent != msg.sender, "forfeit: Opponent cannot be sender");
 
         opponent.transfer(address(this).balance);
         state = 2;
@@ -199,7 +198,7 @@ contract Battleship {
             
         require(state == 1, "accuse_cheating: Game is not in session");
         require(msg.sender == player1.addr || msg.sender == player2.addr, "accuse_cheating: Only players can accuse cheating");
-        // require(msg.sender == owner, "accuse_cheating: Only the owner of the board can accuse cheating");
+        require(owner != msg.sender, "accuse_cheating: Owner cannot be sender");
         require(guess_leaf_index < 2**BOARD_LEN, "accuse_cheating: Guess leaf index out of bounds");
 
         // merkle root of owner
