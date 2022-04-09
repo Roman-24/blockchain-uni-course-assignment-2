@@ -13,319 +13,339 @@ let web3 = new Web3(Web3.givenProvider || "ws://localhost:7545");
 // This is the ABI for your contract (get it from Truffle, from 'bin' folder, or from Remix, in the 'Compile' tab )
 // ============================================================
 var abi = [
-  {
-    inputs: [
-      {
-        internalType: "bytes",
-        name: "opening_nonce",
-        type: "bytes",
-      },
-      {
-        internalType: "bytes32[]",
-        name: "proof",
-        type: "bytes32[]",
-      },
-      {
-        internalType: "uint256",
-        name: "guess_leaf_index",
-        type: "uint256",
-      },
-      {
-        internalType: "address",
-        name: "owner",
-        type: "address",
-      },
-    ],
-    name: "accuse_cheating",
-    outputs: [
-      {
-        internalType: "bool",
-        name: "result",
-        type: "bool",
-      },
-    ],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "opponent",
-        type: "address",
-      },
-    ],
-    name: "claim_opponent_left",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "opponent",
-        type: "address",
-      },
-    ],
-    name: "claim_timeout_winnings",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "claim_win",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address payable",
-        name: "opponent",
-        type: "address",
-      },
-    ],
-    name: "forfeit",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address payable",
-        name: "opponent",
-        type: "address",
-      },
-    ],
-    name: "handle_timeout",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "bytes",
-        name: "opening_nonce",
-        type: "bytes",
-      },
-      {
-        internalType: "bytes32[]",
-        name: "proof",
-        type: "bytes32[]",
-      },
-      {
-        internalType: "uint256",
-        name: "guess_leaf_index",
-        type: "uint256",
-      },
-      {
-        internalType: "address",
-        name: "owner",
-        type: "address",
-      },
-    ],
-    name: "check_one_ship",
-    outputs: [
-      {
-        internalType: "bool",
-        name: "result",
-        type: "bool",
-      },
-    ],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "is_game_over",
-    outputs: [
-      {
-        internalType: "bool",
-        name: "",
-        type: "bool",
-      },
-    ],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: "address",
-        name: "accuser",
-        type: "address",
-      },
-      {
-        indexed: false,
-        internalType: "address",
-        name: "sender",
-        type: "address",
-      },
-    ],
-    name: "PlayerAccused",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: "address",
-        name: "player",
-        type: "address",
-      },
-    ],
-    name: "PlayerJoined",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: "address",
-        name: "player",
-        type: "address",
-      },
-    ],
-    name: "PlayerLeft",
-    type: "event",
-  },
-  {
-    inputs: [],
-    name: "store_bid",
-    outputs: [],
-    stateMutability: "payable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "bytes32",
-        name: "merkle_root",
-        type: "bytes32",
-      },
-    ],
-    name: "store_board_commitment",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "bit",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "bytes32",
-        name: "a",
-        type: "bytes32",
-      },
-      {
-        internalType: "bytes32",
-        name: "b",
-        type: "bytes32",
-      },
-    ],
-    name: "merge_bytes32",
-    outputs: [
-      {
-        internalType: "bytes",
-        name: "",
-        type: "bytes",
-      },
-    ],
-    stateMutability: "pure",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "timeout_stamp",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "bytes",
-        name: "opening_nonce",
-        type: "bytes",
-      },
-      {
-        internalType: "bytes32[]",
-        name: "proof",
-        type: "bytes32[]",
-      },
-      {
-        internalType: "uint256",
-        name: "guess_leaf_index",
-        type: "uint256",
-      },
-      {
-        internalType: "bytes32",
-        name: "commit",
-        type: "bytes32",
-      },
-    ],
-    name: "verify_opening",
-    outputs: [
-      {
-        internalType: "bool",
-        name: "result",
-        type: "bool",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "winner",
-    outputs: [
-      {
-        internalType: "address payable",
-        name: "",
-        type: "address",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
+	{
+		"inputs": [
+			{
+				"internalType": "bytes",
+				"name": "opening_nonce",
+				"type": "bytes"
+			},
+			{
+				"internalType": "bytes32[]",
+				"name": "proof",
+				"type": "bytes32[]"
+			},
+			{
+				"internalType": "uint256",
+				"name": "guess_leaf_index",
+				"type": "uint256"
+			},
+			{
+				"internalType": "address",
+				"name": "owner",
+				"type": "address"
+			}
+		],
+		"name": "accuse_cheating",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "result",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "opponent",
+				"type": "address"
+			}
+		],
+		"name": "claim_opponent_left",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "opponent",
+				"type": "address"
+			}
+		],
+		"name": "claim_timeout_winnings",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "claim_win",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address payable",
+				"name": "opponent",
+				"type": "address"
+			}
+		],
+		"name": "forfeit",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "winner",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "address",
+				"name": "sender",
+				"type": "address"
+			}
+		],
+		"name": "GameOver",
+		"type": "event"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address payable",
+				"name": "opponent",
+				"type": "address"
+			}
+		],
+		"name": "handle_timeout",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "bytes",
+				"name": "opening_nonce",
+				"type": "bytes"
+			},
+			{
+				"internalType": "bytes32[]",
+				"name": "proof",
+				"type": "bytes32[]"
+			},
+			{
+				"internalType": "uint256",
+				"name": "guess_leaf_index",
+				"type": "uint256"
+			},
+			{
+				"internalType": "address",
+				"name": "owner",
+				"type": "address"
+			}
+		],
+		"name": "check_one_ship",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "result",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "is_game_over",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "accuser",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "address",
+				"name": "sender",
+				"type": "address"
+			}
+		],
+		"name": "PlayerAccused",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "player",
+				"type": "address"
+			}
+		],
+		"name": "PlayerJoined",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "player",
+				"type": "address"
+			}
+		],
+		"name": "PlayerLeft",
+		"type": "event"
+	},
+	{
+		"inputs": [],
+		"name": "store_bid",
+		"outputs": [],
+		"stateMutability": "payable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "bytes32",
+				"name": "merkle_root",
+				"type": "bytes32"
+			}
+		],
+		"name": "store_board_commitment",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "bit",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "bytes32",
+				"name": "a",
+				"type": "bytes32"
+			},
+			{
+				"internalType": "bytes32",
+				"name": "b",
+				"type": "bytes32"
+			}
+		],
+		"name": "merge_bytes32",
+		"outputs": [
+			{
+				"internalType": "bytes",
+				"name": "",
+				"type": "bytes"
+			}
+		],
+		"stateMutability": "pure",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "timeout_stamp",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "bytes",
+				"name": "opening_nonce",
+				"type": "bytes"
+			},
+			{
+				"internalType": "bytes32[]",
+				"name": "proof",
+				"type": "bytes32[]"
+			},
+			{
+				"internalType": "uint256",
+				"name": "guess_leaf_index",
+				"type": "uint256"
+			},
+			{
+				"internalType": "bytes32",
+				"name": "commit",
+				"type": "bytes32"
+			}
+		],
+		"name": "verify_opening",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "result",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "winner",
+		"outputs": [
+			{
+				"internalType": "address payable",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	}
 ]; // TODO: replace this with your contract's ABI
 // ============================================================
 abiDecoder.addABI(abi);
 
 // This is the address of the contract you want to connect to; copy this from Remix
 // TODO: fill this in with your contract's address/hash
-let contractAddress = "0x4580b70bA6Db3d45a76908B6eBac14ADB1e6845a";
+let contractAddress = "0x5acF6546E547991531B9F8c6Ad0ceD0de1B5aEE4";
 
 // Reads in the ABI
 var Battleship = new web3.eth.Contract(abi, contractAddress);
 
+const GAS_PRICE = 3141592;
 class BattleshipPlayer {
   /* constructor
     \brief
@@ -343,6 +363,12 @@ class BattleshipPlayer {
     this.opp_addr = opponent_addr;
     this.guesses = Array(BOARD_LEN).fill(Array(BOARD_LEN).fill(false));
     this.my_board = null;
+    this.my_ships = [];
+    this.hits = 0;
+
+    this.opening_nonce;
+    this.proof;
+    this.index;
     // ##############################################################################
     //    TODO initialize a battleship game on receiving solidity contract
     //		- Save anything you'd like to track locally
@@ -352,28 +378,24 @@ class BattleshipPlayer {
     // ##############################################################################
     // Your code here
 
-    this.last = null; //Last opponents response/guess for accuse_cheating
-    this.lleaf = 0; // Last leaf for accuse_cheating
-    this.my_ships = [];
-    this.hits = [];
-
-    this.opponent_board = new Array();
-    //iterate opponent board and create 2d array
-    for (var i = 0; i < BOARD_LEN; i++) {
-      this.opponent_board[i] = new Array();
-      for (var j = 0; j < BOARD_LEN; j++) {
-        this.opponent_board[i][j] = 0;
+    Battleship.events.PlayerAccused(function (err, result) {
+      if (err) {
+        return error(err);
       }
-    }
-
-    //console.log("Not implemented");
-    //register a event from the smart contract.
-    Battleship.events.PlayerAccused({ filter: { accussed: this.my_addr } }, (error, event) => {
-      console.log("constructor event: " + event);
-      if (error) {
-        console.log("constructor event error: " + error);
+      console.log("Timeout called, response needed.");
+      console.log("Player: " + result.returnValues.p);
+      console.log("Timestamp: " + result.returnValues.timestamp);
+    });
+    Battleship.events.GameOver(function (err, result) {
+      if (err) {
+        return error(err);
       }
-      alert("You have been accused of timeout!");
+      console.log("GGWP");
+      if (this.name == "player1") {
+        end_game_ui(this.name, 0);
+      } else {
+        end_game_ui(this.name, 1);
+      }
     });
   }
 
@@ -384,15 +406,14 @@ class BattleshipPlayer {
     //					wei = eth*10**18
     // ##############################################################################
     // Your code here
-    // console.log("Not implemented");
     let ante_wei = ante * 10 ** 18;
     console.log("place_bet: " + ante_wei);
-    Battleship.methods.store_bid().send({ from: this.my_addr, value: ante_wei, gas: 3141592 });
+    Battleship.methods.store_bid().send({ from: this.my_addr, value: ante_wei, gas: GAS_PRICE });
   }
 
   /* initialize_board
     \brief
-      sets class variable my_board and creates a commitment to the board, which is returned
+      sets class varible my_board and creates a commitment to the board, which is returned
       and sent to the opponent
     \params:
       initialize_board - [[bool]] - array of arrays where true represents a ship's presense
@@ -401,7 +422,7 @@ class BattleshipPlayer {
   async initialize_board(initial_board) {
     this.my_board = initial_board;
 
-    // Store the positions of your ten ships locally, so you can prove it if you win
+    // Store the positions of your two ships locally, so you can prove it if you win
     for (var i = 0; i < BOARD_LEN; i++) {
       for (var j = 0; j < BOARD_LEN; j++) {
         if (this.my_board[i][j]) {
@@ -421,8 +442,8 @@ class BattleshipPlayer {
     //    TODO store the board commitment in the contract
     // ##############################################################################
     // Your code here
-    Battleship.methods.store_board_commitment(commit).send({ from: this.my_addr, gas: 3141592 });
 
+    Battleship.methods.store_board_commitment(commit).send({ from: this.my_addr, gas: GAS_PRICE });
     return [commit, sig];
   }
 
@@ -431,7 +452,7 @@ class BattleshipPlayer {
       called with the returned commitment from initialize_board() as argument
     \params:
       commitment - a commitment to an initial board state received from opponent
-      signature - opponent signature on commitment
+      signature - opponeng signature on commitment
   */
   receive_initial_board_commit(commitment, signature) {
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -463,7 +484,7 @@ class BattleshipPlayer {
 
   /* respond_to_guess
     \brief:
-      called when the opponent guesses a board square (i, j)
+      called when the opponent guesses a board squaure (i, j)
     \params:
       i - int - the row of the guessed board square
       j - int - the column of the guessed board square
@@ -510,26 +531,12 @@ class BattleshipPlayer {
     //	  Hint: What arguments do you need to pass to the contract to check a ship?
     // ##############################################################################
     // Your code here
-    // Store last response from opp.
-    this.last = response;
-    this.lleaf = i * BOARD_LEN + j;
-
-    if (this.opp_board[i][j] > 0) {
-      return;
-    }
-
-    if (opening === true) {
-      Battleship.methods
-        .check_one_ship(web3.utils.asciiToHex(JSON.stringify(opening) + JSON.stringify(nonce)), proof, i * BOARD_LEN + j, this.opp_addr)
-        .call({ from: this.my_addr, gas: 3141592 })
-        .then((res) => {
-          if (res) {
-            this.opp_board[i][j] = 2;
-            this.hits.push([web3.utils.asciiToHex(JSON.stringify(opening) + JSON.stringify(nonce)), proof, i * BOARD_LEN + j]);
-          }
-        });
-    } else {
-      this.opp_board[i][j] = 1;
+    this.proof = proof;
+    this.index = i * BOARD_LEN + j;
+    this.opening_nonce = web3.utils.fromAscii(JSON.stringify(opening) + JSON.stringify(nonce));
+    if (opening) {
+      this.hits += 1;
+      Battleship.methods.check_one_ship(this.opening_nonce, this.proof, this.index, this.opp_addr).send({ from: this.my_addr });
     }
   }
 
@@ -539,8 +546,7 @@ class BattleshipPlayer {
     //	  - Called when you press "Accuse Timeout"
     // ##############################################################################
     // Your code here
-    //console.log("Not implemented");
-    Battleship.methods.claim_opponent_left(this.opp_addr).send({ from: this.my_addr, gas: 3141592 });
+    Battleship.methods.claim_opponent_left(this.opp_addr).send({ from: this.my_addr, gas: GAS_PRICE });
   }
 
   async handle_timeout_accusation() {
@@ -550,17 +556,9 @@ class BattleshipPlayer {
     // 		- Returns true if the game is over
     // ##############################################################################
     // Your code here
-    //console.log("Not implemented");
-    await Battleship.methods.handle_timeout(this.opp_addr).send({ from: this.my_addr, gas: 3141592 });
-
-    let result = Battleship.methods
-      .is_game_over()
-      .call({ from: this.my_addr, gas: 3141592 })
-      .then((res) => {
-        return res;
-      });
-
-    return result;
+    Battleship.methods.handle_timeout(this.opp_addr).send({ from: this.my_addr, gas: GAS_PRICE });
+    console.log("Response sent.");
+    return await Battleship.methods.is_game_over().call({ from: this.my_addr, gas: GAS_PRICE });
   }
 
   /* claim_timeout
@@ -576,16 +574,8 @@ class BattleshipPlayer {
     // 		- Returns true if game is over
     // ##############################################################################
     // Your code here
-    //console.log("Not implemented");
-    await Battleship.methods.claim_timeout_winnings(this.opp_addr).send({ from: this.my_addr, gas: 3141592 });
-    //check if game has ended
-    let result = await Battleship.methods
-      .is_game_over()
-      .call({ from: this.my_addr, gas: 3141592 })
-      .then((res) => {
-        return res;
-      });
-    return result;
+    Battleship.methods.claim_timeout_winnings(this.opp_addr).send({ from: this.my_addr, gas: GAS_PRICE });
+    return await Battleship.methods.is_game_over().call({ from: this.my_addr, gas: GAS_PRICE });
   }
 
   /*
@@ -601,23 +591,14 @@ class BattleshipPlayer {
     //		- For this project, the proof should always verify (the opponent will never lie).
     // ##############################################################################
     // Your code here
-    //console.log("Not implemented");
-    if (this.last != null) {
-      let [opening, nonce, proof] = this.last;
 
-      try {
-        await Battleship.methods.accuse_cheating(web3.utils.asciiToHex(JSON.stringify(opening) + JSON.stringify(nonce)), proof, this.lleaf, this.opp_addr).send({ from: this.my_addr, gas: 3141592 });
-        let result = await Battleship.methods
-          .is_game_over()
-          .call({ from: this.my_addr, gas: 3141592 })
-          .then((res) => {
-            return res;
-          });
-        return result;
-      } catch (e) {
-        return false;
-      }
+    if (typeof this.opening_nonce !== "undefined" && typeof this.proof !== "undefined" && typeof this.index !== "undefined") {
+      Battleship.methods.accuse_cheating(this.opening_nonce, this.proof, this.index, this.opp_addr).send({ from: this.my_addr, gas: GAS_PRICE });
+      return await Battleship.methods.is_game_over().call({ from: this.my_addr, gas: GAS_PRICE });
+    } else {
+      console.log("Too early, pal.");
     }
+    return false;
   }
 
   /*
@@ -627,45 +608,31 @@ class BattleshipPlayer {
   async claim_win() {
     // ##############################################################################
     //    TODO implement claim of a win
-    //		- Check the placements of 10 hits you have made on the opponent's board.
+    //		- Check the placements of ten hits you have made on the opponent's board.
     //		- Check (verify with contract) that your board has 10 ships.
     //		- Claim the win to end the game.
     //		Hint: you can convert an opening and a nonce into a bytes memory like this:
     //			web3.utils.fromAscii(JSON.stringify(opening) + JSON.stringify(nonce))
     // ##############################################################################
     // Your code here
-    //console.log("Not implemented");
-    for (let row = 0; row < BOARD_LEN; row++) {
-      for (let col = 0; col < BOARD_LEN; col++) {
-        if (this.my_board[row][col] == true) {
-          await Battleship.methods.check_one_ship(web3.utils.asciiToHex(JSON.stringify(true) + JSON.stringify(this.nonces[row][col])), get_proof_for_board_guess(this.my_board, this.nonces, [row, col]), row * BOARD_LEN + col, this.my_addr).send({
-            from: this.my_addr,
-            gas: 3141592,
-          });
-        }
+    if (this.hits === 10 && this.my_ships.length === 10) {
+      var x;
+      for (x of this.my_ships) {
+        let i = x[0];
+        let j = x[1];
+        let opening = this.my_board[i][j];
+        let proof = get_proof_for_board_guess(this.my_board, this.nonces, [i, j]);
+        let index = i * BOARD_LEN + j;
+        let nonce = this.nonces[i][j];
+        let opening_nonce = web3.utils.fromAscii(JSON.stringify(opening) + JSON.stringify(nonce));
+
+        Battleship.methods.check_one_ship(opening_nonce, proof, index, this.my_addr).send({ from: this.my_addr, gas: GAS_PRICE });
       }
+      await Battleship.methods.claim_win().send({ from: this.my_addr, gas: GAS_PRICE });
+    } else {
+      console.log("You haven't placed and hit 10 ships.");
     }
-
-    //Verify opponent ship-hits with the contract
-    for (let hit = 0; hit < this.hits.length; hit++) {
-      let [nonce, proof, index] = this.hits[hit];
-      await Battleship.methods.check_one_ship(nonce, proof, index, this.opp_addr).send({
-        from: this.my_addr,
-        gas: 3141592,
-      });
-    }
-
-    try {
-      await Battleship.methods.claim_win().send({ from: this.my_addr, gas: 3141592 });
-      return await Battleship.methods
-        .is_game_over()
-        .call({ from: this.my_addr, gas: 3141592 })
-        .then((res) => {
-          return res;
-        });
-    } catch (e) {
-      return false;
-    }
+    return await Battleship.methods.is_game_over().call({ from: this.my_addr, gas: GAS_PRICE });
   }
 
   /*
@@ -673,13 +640,11 @@ class BattleshipPlayer {
 			Forfeit the game - sends the opponent the entire reward.
 	*/
   async forfeit_game() {
+    Battleship.methods.forfeit(this.opp_addr).send({ from: this.my_addr, gas: GAS_PRICE });
     // ##############################################################################
     //    TODO forfeit the battleship game
     //		- Call solidity to give up your bid to the other player and end the game.
     // ##############################################################################
     // Your code here
-    //console.log("Not implemented");
-    console.log("Forfeit game");
-    Battleship.methods.forfeit(this.opp_addr).send({ from: this.my_addr, gas: 3141592 });
   }
 }

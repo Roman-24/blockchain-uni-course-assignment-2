@@ -38,6 +38,7 @@ contract Battleship {
     event PlayerLeft(address indexed player);
     event PlayerJoined(address indexed player);
     event PlayerAccused(address indexed accuser, address sender);
+    event GameOver(address indexed winner, address sender);
     
     // Store the bids of each player
     // Start the game when both bids are received
@@ -46,6 +47,11 @@ contract Battleship {
     function store_bid() public payable{
 
         require(player1.addr == address(0) || player2.addr == address(0), "store_bid: Game already started");
+
+        if (player1.addr != address(0) && player2.addr != address(0)){
+            clear_state();
+        }
+
         require(state == 0, "store_bid: Game already started");
 
         if (player1.addr == address(0)){
@@ -137,10 +143,26 @@ contract Battleship {
                     return false;
                 }
             }
-            leaves.push(guess_leaf_index);
-            if (num_ships < 10) {
-                num_ships++;
+
+            if(owner == player1.addr){
+
+                if(owner != msg.sender){
+                    player2.leaf_check.push(guess_leaf_index);
+                }
+                else {
+                    player1.num_ships++;
+                }        
+            } 
+            else if (owner == player2.addr) {
+
+                if(owner != msg.sender){
+                    player1.leaf_check.push(guess_leaf_index);
+                }      
+                else {
+                    player2.num_ships++;
+                }       
             }
+
             return true;
         }
         return false;
@@ -159,12 +181,12 @@ contract Battleship {
         winner = msg.sender == player1.addr ? player2.addr : player1.addr;
 
         if (msg.sender == player1.addr) {
-            if (player1.leaf_check.length == 10){
+            if (player1.leaf_check.length == 10 && player1.num_ships >= 10){
                 winner = player1.addr;
             }
         } 
         else if (msg.sender == player2.addr) {
-            if (player2.leaf_check.length == 10){
+            if (player2.leaf_check.length == 10 && player2.num_ships >= 10){
                 winner = player2.addr;
             }
         }
