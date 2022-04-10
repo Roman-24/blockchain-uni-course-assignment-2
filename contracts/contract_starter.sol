@@ -38,7 +38,8 @@ contract Battleship {
     event PlayerLeft(address indexed player);
     event PlayerJoined(address indexed player);
     event PlayerAccused(address indexed accuser, address sender);
-    event GameOver(address indexed winner, address sender);
+    event GameOver(address indexed winner);
+    event Log(string indexed my_message);
     
     // Store the bids of each player
     // Start the game when both bids are received
@@ -48,6 +49,7 @@ contract Battleship {
 
         require(player1.addr == address(0) || player2.addr == address(0), "store_bid: Game already started");
 
+        // clearnutie states pred zaziatkom kazdej hry aby neostala vysiet rozohrata hra
         if (player1.addr != address(0) && player2.addr != address(0)){
             clear_state();
         }
@@ -55,6 +57,7 @@ contract Battleship {
         require(state == 0, "store_bid: Game already started");
 
         if (player1.addr == address(0)){
+            // teoreticky by mohli hrat aj o nula ETH ale to nechceme
             require(msg.value > 0, "store_bid: Bid must be positive");
             player1.addr = msg.sender;
             bit = msg.value;
@@ -64,7 +67,7 @@ contract Battleship {
             require(msg.sender != player1.addr, "store_bid: Player cannot bid on their own bid");
             player2.addr = msg.sender;
 
-            // if bit from palyer2 is more than bit from player1, refund excess to player2
+            // ak druhy hrac dal viac ako prvy rozdiel sa zuctuje spat
             if (msg.value > bit){
                 msg.sender.transfer(msg.value - bit);
             }
@@ -78,16 +81,16 @@ contract Battleship {
 
         player1.addr = address(0);
         player1.merkle_root = bytes32(0);
+        player1.num_ships = 0;
+        delete player1.leaf_check;
 
         player2.addr = address(0);
         player2.merkle_root = bytes32(0);
-
-        delete player1.leaf_check;
+        player2.num_ships = 0;
         delete player2.leaf_check;
 
         bit = 0;
         state = 0;
-
         timeout_stamp = 0;
         winner = address(0);    
     }
@@ -95,6 +98,7 @@ contract Battleship {
     // Store the initial board commitments of each player
     // Note that merkle_root is the hash of the topmost value of the merkle tree
     function store_board_commitment(bytes32 merkle_root) public {
+
         require(state == 0, "store_board_commitment: Game is not in session");
         require(msg.sender == player1.addr || msg.sender == player2.addr, "store_board_commitment: Only players can store board commitments");
         require(msg.sender == player1.addr ? player1.merkle_root == bytes32(0) : player2.merkle_root == bytes32(0), "store_board_commitment: Board commitment already stored");
@@ -105,7 +109,7 @@ contract Battleship {
             player2.merkle_root = merkle_root;
         } 
         
-        // if both players have committed, start the game
+        // ak uz obaja maju initial board commitments tak zacneme hru
         if (player1.merkle_root != bytes32(0) && player2.merkle_root != bytes32(0)){
             state = 1;
         }
@@ -123,17 +127,12 @@ contract Battleship {
         require(owner == player1.addr || owner == player2.addr, "check_one_ship: Owner must be a player");
         require(guess_leaf_index < 2**BOARD_LEN, "check_one_ship: Guess leaf index out of bounds");
 
-        // num of ships for this player
-        uint32 num_ships = player1.num_ships;
-        // merkle root of owner
+        // merkle root of owner and owner leaves
         bytes32 owner_merkle_root = player1.merkle_root;
-        // owner leaves
         uint256[] storage leaves = player1.leaf_check;
-
         if (player2.addr == owner) {
             owner_merkle_root = player2.merkle_root;
             leaves = player2.leaf_check;
-            num_ships = player2.num_ships;
         }
 
         if (verify_opening(opening_nonce, proof, guess_leaf_index, owner_merkle_root)){
@@ -145,7 +144,6 @@ contract Battleship {
             }
 
             if(owner == player1.addr){
-
                 if(owner != msg.sender){
                     player2.leaf_check.push(guess_leaf_index);
                 }
@@ -154,7 +152,6 @@ contract Battleship {
                 }        
             } 
             else if (owner == player2.addr) {
-
                 if(owner != msg.sender){
                     player1.leaf_check.push(guess_leaf_index);
                 }      
@@ -162,7 +159,6 @@ contract Battleship {
                     player2.num_ships++;
                 }       
             }
-
             return true;
         }
         return false;
@@ -174,12 +170,15 @@ contract Battleship {
     // should transfer winning funds to you and end the game.
     function claim_win() public {
 
+        emit Log("claim_win:\n" + "player1.leaf_check.length: " + player1.leaf_check.length + "\n" + "player1.num_ships: " + player1.num_ships);
+        emit Log("claim_win:\n" + "player2.leaf_check.length: " + player2.leaf_check.length + "\n" + "player2.num_ships: " + player2.num_ships);
+
         require(state == 1, "claim_win: Game is not in session");
         require(msg.sender == player1.addr || msg.sender == player2.addr, "claim_win: Only players can claim win");
 
-        // chech who is the winner of the game
-        winner = msg.sender == player1.addr ? player2.addr : player1.addr;
+        emit Log("dostal som sa cez podmienkly func");
 
+        // zaeviduj winnera hry
         if (msg.sender == player1.addr) {
             if (player1.leaf_check.length == 10 && player1.num_ships >= 10){
                 winner = player1.addr;
@@ -191,8 +190,11 @@ contract Battleship {
             }
         }
 
+        // winner nemoze byt 0
+        require(winner != address(0), "claim_win: Winner cannot be 0");
         winner.transfer(address(this).balance);
         state = 2;
+        emit GameOver(winner);
         clear_state();
     }
 
@@ -208,6 +210,7 @@ contract Battleship {
 
         opponent.transfer(address(this).balance);
         state = 2;
+        emit GameOver(opponent);
         clear_state();
     }
 
@@ -231,7 +234,8 @@ contract Battleship {
         }
 
         if (verify_opening(opening_nonce, proof, guess_leaf_index, owner_merkle_root) == false){
-            msg.sender.transfer(address(this).balance);
+            msg.sender.transfer(address(this).balance);    
+            emit GameOver(msg.sender);
             clear_state();
             return true;
         }
@@ -260,7 +264,7 @@ contract Battleship {
     function handle_timeout(address payable opponent) public {
     
         require(state == 1, "handle_timeout: Game is not in session");
-        require(msg.sender == winner, "handle_timeout: Only the winner of the timeout can handle the timeout");
+        require(msg.sender != winner, "handle_timeout: Only second player can handle the timeout");
         require(opponent != address(0), "handle_timeout: Opponent cannot be null");
         require(opponent == player1.addr || opponent == player2.addr, "handle_timeout: Opponent must be a player");
 
@@ -282,6 +286,7 @@ contract Battleship {
         if (block.timestamp - timeout_stamp > _TIME_LIMIT && timeout_stamp != 0){
             state = 2;
             msg.sender.transfer(address(this).balance);
+            emit GameOver(msg.sender);
             clear_state();
         }
     }
