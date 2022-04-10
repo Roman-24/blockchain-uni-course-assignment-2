@@ -39,7 +39,7 @@ contract Battleship {
     event PlayerJoined(address indexed player);
     event PlayerAccused(address indexed accuser, address sender);
     event GameOver(address indexed winner);
-    event Log(string indexed my_message);
+    event Log(string my_message1, uint256 temp1, string my_message2, uint256 temp2);
     
     // Store the bids of each player
     // Start the game when both bids are received
@@ -170,13 +170,11 @@ contract Battleship {
     // should transfer winning funds to you and end the game.
     function claim_win() public {
 
-        emit Log("claim_win:\n" + "player1.leaf_check.length: " + player1.leaf_check.length + "\n" + "player1.num_ships: " + player1.num_ships);
-        emit Log("claim_win:\n" + "player2.leaf_check.length: " + player2.leaf_check.length + "\n" + "player2.num_ships: " + player2.num_ships);
+        emit Log("claim_win:\n player1.leaf_check.length: ", player1.leaf_check.length, "\n player1.num_ships: ", player1.num_ships);
+        emit Log("claim_win:\n player2.leaf_check.length: ", player2.leaf_check.length, "\n player2.num_ships: ", player2.num_ships);
 
         require(state == 1, "claim_win: Game is not in session");
         require(msg.sender == player1.addr || msg.sender == player2.addr, "claim_win: Only players can claim win");
-
-        emit Log("dostal som sa cez podmienkly func");
 
         // zaeviduj winnera hry
         if (msg.sender == player1.addr) {

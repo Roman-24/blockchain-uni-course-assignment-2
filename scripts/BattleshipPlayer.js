@@ -14,86 +14,6 @@ let web3 = new Web3(Web3.givenProvider || "ws://localhost:7545");
 // ============================================================
 var abi = [
 	{
-		"inputs": [
-			{
-				"internalType": "bytes",
-				"name": "opening_nonce",
-				"type": "bytes"
-			},
-			{
-				"internalType": "bytes32[]",
-				"name": "proof",
-				"type": "bytes32[]"
-			},
-			{
-				"internalType": "uint256",
-				"name": "guess_leaf_index",
-				"type": "uint256"
-			},
-			{
-				"internalType": "address",
-				"name": "owner",
-				"type": "address"
-			}
-		],
-		"name": "accuse_cheating",
-		"outputs": [
-			{
-				"internalType": "bool",
-				"name": "result",
-				"type": "bool"
-			}
-		],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "opponent",
-				"type": "address"
-			}
-		],
-		"name": "claim_opponent_left",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "opponent",
-				"type": "address"
-			}
-		],
-		"name": "claim_timeout_winnings",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "claim_win",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address payable",
-				"name": "opponent",
-				"type": "address"
-			}
-		],
-		"name": "forfeit",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
 		"anonymous": false,
 		"inputs": [
 			{
@@ -105,66 +25,6 @@ var abi = [
 		],
 		"name": "GameOver",
 		"type": "event"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address payable",
-				"name": "opponent",
-				"type": "address"
-			}
-		],
-		"name": "handle_timeout",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "bytes",
-				"name": "opening_nonce",
-				"type": "bytes"
-			},
-			{
-				"internalType": "bytes32[]",
-				"name": "proof",
-				"type": "bytes32[]"
-			},
-			{
-				"internalType": "uint256",
-				"name": "guess_leaf_index",
-				"type": "uint256"
-			},
-			{
-				"internalType": "address",
-				"name": "owner",
-				"type": "address"
-			}
-		],
-		"name": "check_one_ship",
-		"outputs": [
-			{
-				"internalType": "bool",
-				"name": "result",
-				"type": "bool"
-			}
-		],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "is_game_over",
-		"outputs": [
-			{
-				"internalType": "bool",
-				"name": "",
-				"type": "bool"
-			}
-		],
-		"stateMutability": "nonpayable",
-		"type": "function"
 	},
 	{
 		"anonymous": false,
@@ -243,22 +103,36 @@ var abi = [
 		"type": "event"
 	},
 	{
-		"inputs": [],
-		"name": "store_bid",
-		"outputs": [],
-		"stateMutability": "payable",
-		"type": "function"
-	},
-	{
 		"inputs": [
 			{
-				"internalType": "bytes32",
-				"name": "merkle_root",
-				"type": "bytes32"
+				"internalType": "bytes",
+				"name": "opening_nonce",
+				"type": "bytes"
+			},
+			{
+				"internalType": "bytes32[]",
+				"name": "proof",
+				"type": "bytes32[]"
+			},
+			{
+				"internalType": "uint256",
+				"name": "guess_leaf_index",
+				"type": "uint256"
+			},
+			{
+				"internalType": "address",
+				"name": "owner",
+				"type": "address"
 			}
 		],
-		"name": "store_board_commitment",
-		"outputs": [],
+		"name": "accuse_cheating",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "result",
+				"type": "bool"
+			}
+		],
 		"stateMutability": "nonpayable",
 		"type": "function"
 	},
@@ -273,6 +147,112 @@ var abi = [
 			}
 		],
 		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "bytes",
+				"name": "opening_nonce",
+				"type": "bytes"
+			},
+			{
+				"internalType": "bytes32[]",
+				"name": "proof",
+				"type": "bytes32[]"
+			},
+			{
+				"internalType": "uint256",
+				"name": "guess_leaf_index",
+				"type": "uint256"
+			},
+			{
+				"internalType": "address",
+				"name": "owner",
+				"type": "address"
+			}
+		],
+		"name": "check_one_ship",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "result",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "opponent",
+				"type": "address"
+			}
+		],
+		"name": "claim_opponent_left",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "opponent",
+				"type": "address"
+			}
+		],
+		"name": "claim_timeout_winnings",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "claim_win",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address payable",
+				"name": "opponent",
+				"type": "address"
+			}
+		],
+		"name": "forfeit",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address payable",
+				"name": "opponent",
+				"type": "address"
+			}
+		],
+		"name": "handle_timeout",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "is_game_over",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
@@ -297,6 +277,26 @@ var abi = [
 			}
 		],
 		"stateMutability": "pure",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "store_bid",
+		"outputs": [],
+		"stateMutability": "payable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "bytes32",
+				"name": "merkle_root",
+				"type": "bytes32"
+			}
+		],
+		"name": "store_board_commitment",
+		"outputs": [],
+		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
@@ -365,7 +365,7 @@ abiDecoder.addABI(abi);
 
 // This is the address of the contract you want to connect to; copy this from Remix
 // TODO: fill this in with your contract's address/hash
-let contractAddress = "0x29Debf08717d9F3dc7fe06fd15a6341B3587F30C";
+let contractAddress = "0x7Db4590eEAa808300fC77e53667d6A447a5aeBF8";
 
 // Reads in the ABI
 var Battleship = new web3.eth.Contract(abi, contractAddress);
