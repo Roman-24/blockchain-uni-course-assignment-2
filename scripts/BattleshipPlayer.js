@@ -101,12 +101,6 @@ var abi = [
 				"internalType": "address",
 				"name": "winner",
 				"type": "address"
-			},
-			{
-				"indexed": false,
-				"internalType": "address",
-				"name": "sender",
-				"type": "address"
 			}
 		],
 		"name": "GameOver",
@@ -171,6 +165,37 @@ var abi = [
 		],
 		"stateMutability": "nonpayable",
 		"type": "function"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "string",
+				"name": "my_message1",
+				"type": "string"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "temp1",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "string",
+				"name": "my_message2",
+				"type": "string"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "temp2",
+				"type": "uint256"
+			}
+		],
+		"name": "Log",
+		"type": "event"
 	},
 	{
 		"anonymous": false,
@@ -340,7 +365,7 @@ abiDecoder.addABI(abi);
 
 // This is the address of the contract you want to connect to; copy this from Remix
 // TODO: fill this in with your contract's address/hash
-let contractAddress = "0x5acF6546E547991531B9F8c6Ad0ceD0de1B5aEE4";
+let contractAddress = "0x29Debf08717d9F3dc7fe06fd15a6341B3587F30C";
 
 // Reads in the ABI
 var Battleship = new web3.eth.Contract(abi, contractAddress);
@@ -397,6 +422,13 @@ class BattleshipPlayer {
         end_game_ui(this.name, 1);
       }
     });
+	Battleship.events.Log(function (err, result) {
+		if (err) {
+			return error(err);
+		}
+		console.log("Log called");
+		console.log("log sprava:" + result.returnValues.my_message1 + result.returnValues.temp1 + result.returnValues.my_message2 + result.returnValues.temp2);
+	});
   }
 
   async place_bet(ante) {
