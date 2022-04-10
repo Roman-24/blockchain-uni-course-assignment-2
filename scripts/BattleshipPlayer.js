@@ -351,7 +351,7 @@ var abi = [
 		"name": "winner",
 		"outputs": [
 			{
-				"internalType": "address payable",
+				"internalType": "address",
 				"name": "",
 				"type": "address"
 			}
@@ -365,7 +365,7 @@ abiDecoder.addABI(abi);
 
 // This is the address of the contract you want to connect to; copy this from Remix
 // TODO: fill this in with your contract's address/hash
-let contractAddress = "0x7Db4590eEAa808300fC77e53667d6A447a5aeBF8";
+let contractAddress = "0x9bc70DF304F8D23F1Ed761f22D27A8Cd17fe3eFd";
 
 // Reads in the ABI
 var Battleship = new web3.eth.Contract(abi, contractAddress);

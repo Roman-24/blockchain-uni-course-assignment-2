@@ -15,7 +15,7 @@ contract Battleship {
     // - whether a player has proven 10 winning moves
     // - whether a player has proven their own board had 10 ships
     struct Player {
-        address payable addr;
+        address addr;
         bytes32 merkle_root;
         uint32 num_ships;
         uint256[] leaf_check;
@@ -28,7 +28,7 @@ contract Battleship {
     uint256 public bit;
     uint public timeout_stamp;
     uint constant private _TIME_LIMIT = 1 minutes;
-    address payable public winner;
+    address public winner;
 
     Player player1;
     Player player2;
@@ -125,38 +125,33 @@ contract Battleship {
         require(state == 1, "check_one_ship: Game is not in session");
         require(msg.sender == player1.addr || msg.sender == player2.addr, "check_one_ship: Only players can check ships");
         require(owner == player1.addr || owner == player2.addr, "check_one_ship: Owner must be a player");
-        require(guess_leaf_index < 2**BOARD_LEN, "check_one_ship: Guess leaf index out of bounds");
+        //require(guess_leaf_index < 2**BOARD_LEN, "check_one_ship: Guess leaf index out of bounds");
 
-        // merkle root of owner and owner leaves
-        bytes32 owner_merkle_root = player1.merkle_root;
-        uint256[] storage leaves = player1.leaf_check;
-        if (player2.addr == owner) {
-            owner_merkle_root = player2.merkle_root;
-            leaves = player2.leaf_check;
-        }
+        
+        uint256 len = owner == player1.addr ? player1.leaf_check.length : player2.leaf_check.length;
 
-        if (verify_opening(opening_nonce, proof, guess_leaf_index, owner_merkle_root)){
+        if (verify_opening(opening_nonce, proof, guess_leaf_index, owner == player1.addr ? player1.merkle_root : player2.merkle_root)){
 
-            for (uint256 index = 0; index < leaves.length; index++) {
-                if (leaves[index] == guess_leaf_index) {
+            for (uint256 index = 0; index < len; index++) {
+                if ((owner == player1.addr ? player1.leaf_check[index] : player2.leaf_check[index]) == guess_leaf_index) {
                     return false;
                 }
             }
 
-            if(owner == player1.addr){
-                if(owner != msg.sender){
-                    player2.leaf_check.push(guess_leaf_index);
+            if (owner == player1.addr) {
+                if (owner == msg.sender){
+                    player1.num_ships +=1;
                 }
                 else {
-                    player1.num_ships++;
+                    player2.leaf_check.push(guess_leaf_index);
                 }        
             } 
-            else if (owner == player2.addr) {
-                if(owner != msg.sender){
-                    player1.leaf_check.push(guess_leaf_index);
+            else {
+                if(owner == msg.sender){
+                    player2.num_ships += 1;
                 }      
                 else {
-                    player2.num_ships++;
+                    player1.leaf_check.push(guess_leaf_index);
                 }       
             }
             return true;
@@ -178,22 +173,23 @@ contract Battleship {
 
         // zaeviduj winnera hry
         if (msg.sender == player1.addr) {
-            if (player1.leaf_check.length == 10 && player1.num_ships >= 10){
+            if (player1.leaf_check.length == 10 && player1.num_ships == 10){
                 winner = player1.addr;
             }
         } 
         else if (msg.sender == player2.addr) {
-            if (player2.leaf_check.length == 10 && player2.num_ships >= 10){
+            if (player2.leaf_check.length == 10 && player2.num_ships == 10){
                 winner = player2.addr;
             }
         }
 
         // winner nemoze byt 0
-        require(winner != address(0), "claim_win: Winner cannot be 0");
-        winner.transfer(address(this).balance);
-        state = 2;
-        emit GameOver(winner);
-        clear_state();
+        if (winner != address(0)){
+            payable(winner).transfer(address(this).balance);
+            state = 2;
+            emit GameOver(winner);
+            clear_state();
+        }
     }
 
     // Forfeit the game
@@ -222,7 +218,7 @@ contract Battleship {
         require(state == 1, "accuse_cheating: Game is not in session");
         require(msg.sender == player1.addr || msg.sender == player2.addr, "accuse_cheating: Only players can accuse cheating");
         require(owner != msg.sender, "accuse_cheating: Owner cannot be sender");
-        require(guess_leaf_index < 2**BOARD_LEN, "accuse_cheating: Guess leaf index out of bounds");
+        // require(guess_leaf_index < 2**BOARD_LEN, "accuse_cheating: Guess leaf index out of bounds");
 
         // merkle root of owner
         bytes32 owner_merkle_root = player1.merkle_root;
