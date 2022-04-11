@@ -521,7 +521,7 @@ abiDecoder.addABI(abi);
 
 // This is the address of the contract you want to connect to; copy this from Remix
 // TODO: fill this in with your contract's address/hash
-let contractAddress = "0x94e80eB5B3A9ed5224dDa66392ed18931be49699";
+let contractAddress = "0xAEC4b56f845c2e37e777F293Aa8e4990807f0aa4";
 
 // Reads in the ABI
 var Battleship = new web3.eth.Contract(abi, contractAddress);

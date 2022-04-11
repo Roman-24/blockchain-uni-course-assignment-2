@@ -17,23 +17,23 @@ contract("Battleship", accounts => {
 
     describe('Store bids', () => {
 
-        it("basic store_bids check for one player", async () => {
+        it("Basic store_bids check for one player", async () => {
 
             await ethership.store_bid({from: accounts[1], value: BID});
             
-            assert(await ethership.get_player1_addr.call() == accounts[1], "Player 1 address not stored correctly");
-            assert(await ethership.get_player2_addr.call() == ZERO_ADDR, "Player 2 address not stored correctly");
+            assert(await ethership.get_player1_addr.call() == accounts[1], "Player1 address not stored correctly");
+            assert(await ethership.get_player2_addr.call() == ZERO_ADDR, "Player2 address not stored correctly");
             assert(await ethership.get_bid.call() == BID, "BID value not stored correctly");
 
         }).timeout(TIMER);
 
-        it("basic store_bids check for two players", async () => {
+        it("Basic store_bids check for two players", async () => {
 
             await ethership.store_bid({from: accounts[1], value: BID});
             await ethership.store_bid({from: accounts[2], value: BID + 1256});
 
-            assert(await ethership.get_player1_addr.call() == accounts[1], "Player 1 address not stored correctly");
-            assert(await ethership.get_player2_addr.call() == accounts[2], "Player 2 address not stored correctly");
+            assert(await ethership.get_player1_addr.call() == accounts[1], "Player1 address not stored correctly");
+            assert(await ethership.get_player2_addr.call() == accounts[2], "Player2 address not stored correctly");
             assert(await ethership.get_bid.call() == BID*2, "BID value not stored correctly");
 
         }).timeout(TIMER);
@@ -41,7 +41,7 @@ contract("Battleship", accounts => {
 
     describe('Clear_state', () => {
 
-        it("Chceck if all atributes are cleared", async () => {
+        it("Chceck if all atributes are cleared but test return error becouse func is internal", async () => {
 
             await ethership.store_bid({from: accounts[1], value: BID});
             await ethership.store_bid({from: accounts[2], value: BID + 1256});
@@ -59,7 +59,7 @@ contract("Battleship", accounts => {
 
     describe('Store_board_commitment', () => {
 
-        it('Should store player1 and player2 board commitments', async () => {
+        it('Store and get player1 and player2 board commitments', async () => {
 
             await ethership.store_bid({from: accounts[1], value: BID});
             await ethership.store_bid({from: accounts[2], value: BID});
@@ -72,7 +72,7 @@ contract("Battleship", accounts => {
 
         }).timeout(TIMER);
 
-        it('Should revert as player 1 tries to submit merkle after submittion of both players', async () => {
+        it('All players not store board commitments two times', async () => {
             
             await ethership.store_bid({from: accounts[1], value: BID});
             await ethership.store_bid({from: accounts[2], value: BID});
@@ -85,7 +85,7 @@ contract("Battleship", accounts => {
 
         }).timeout(TIMER);
 
-        it('Player 3 tries to set merkle', async () => {
+        it('Player 3 can not set merkle', async () => {
 
             await ethership.store_bid({from: accounts[1], value: BID});
             await ethership.store_bid({from: accounts[2], value: BID});
@@ -98,7 +98,7 @@ contract("Battleship", accounts => {
 
     describe('Forfeit', () => {
 
-        it('Should end the game', async function () {
+        it('End the game', async function () {
 
             await ethership.store_bid({from: accounts[1], value: BID});
             await ethership.store_bid({from: accounts[2], value: BID+52368});
@@ -107,8 +107,8 @@ contract("Battleship", accounts => {
             await ethership.forfeit(accounts[2], {from: accounts[1]});
         
             assert(await ethership.is_game_over.call(), "Game not end as was predicted");
-            assert(await ethership.get_player1_addr.call() == ZERO_ADDR, "Player 1 address not zero");
-            assert(await ethership.get_player2_addr.call() == ZERO_ADDR, "Player 2 address not zero");
+            assert(await ethership.get_player1_addr.call() == ZERO_ADDR, "Player1 address not zero");
+            assert(await ethership.get_player2_addr.call() == ZERO_ADDR, "Player2 address not zero");
             assert(await ethership.get_bid.call() == 0, "BID value not zero");
             assert(await ethership.get_state.call() == 0, "BID value not zero");
 
@@ -144,19 +144,6 @@ contract("Battleship", accounts => {
 
         }).timeout(TIMER);
 
-        it('Oponent can not be sender', async function () {
-
-            await ethership.store_bid({from: accounts[1], value: BID});
-            await ethership.store_bid({from: accounts[2], value: BID+52368});
-            await ethership.store_board_commitment(web3.utils.asciiToHex(MERKLE), {from: accounts[1]});
-            await ethership.store_board_commitment(web3.utils.asciiToHex(MERKLE2), {from: accounts[2]});
-
-            // await tryCatch (ethership.claim_opponent_left(accounts[1] , {from: accounts[1]}), "claim_timeout_winnings: Opponent can not be sender");
-            assert(await ethership.get_winner.call() == ZERO_ADDR, "Winner address is not zero");
-            assert(await ethership.get_timeout_stamp.call() == 0, "Timeout_stamp is not zero");
-
-        }).timeout(TIMER);
-
         it('Handle_timeout', async () => {
 
             await ethership.store_bid({from: accounts[1], value: BID});
@@ -169,8 +156,8 @@ contract("Battleship", accounts => {
             await ethership.handle_timeout(accounts[2], {from: accounts[2]});
             await ethership.claim_timeout_winnings(accounts[2], {from: accounts[1]});
 
-            assert(await ethership.get_player1_addr.call() == accounts[1], "Player 1 address not stored correctly");
-            assert(await ethership.get_player2_addr.call() == accounts[2], "Player 2 address not stored correctly");
+            assert(await ethership.get_player1_addr.call() == accounts[1], "Player1 address not stored correctly");
+            assert(await ethership.get_player2_addr.call() == accounts[2], "Player2 address not stored correctly");
             assert(await ethership.get_timeout_stamp.call() == 0, "Timeout_stamp is not zero");
             assert(await ethership.get_bid.call() == BID*2, "BID value not stored correctly");
 
@@ -191,8 +178,8 @@ contract("Battleship", accounts => {
 
             await ethership.claim_timeout_winnings(accounts[2], {from: accounts[1]});
 
-            assert(await ethership.get_player1_addr.call() == ZERO_ADDR, "Player 1 address not zero");
-            assert(await ethership.get_player2_addr.call() == ZERO_ADDR, "Player 2 address not zero");
+            assert(await ethership.get_player1_addr.call() == ZERO_ADDR, "Player1 address not zero");
+            assert(await ethership.get_player2_addr.call() == ZERO_ADDR, "Player2 address not zero");
             assert(await ethership.get_bid.call() == 0, "BID value not zero");
 
         }).timeout(TIMER);

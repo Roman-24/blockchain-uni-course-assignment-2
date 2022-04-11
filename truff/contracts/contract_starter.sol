@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity >=0.4.22 <0.7.0;
 
-//import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/release-v3.0.0/contracts/cryptography/ECDSA.sol";
-import "./ECDSA.sol";
+import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/release-v3.0.0/contracts/cryptography/ECDSA.sol";
+//import "./ECDSA.sol";
 
 contract Battleship {
     using ECDSA for bytes32;
@@ -230,7 +230,6 @@ contract Battleship {
 
         // merkle root of owner
         bytes32 owner_merkle_root = player1.merkle_root;
-
         if (player2.addr == owner) {
             owner_merkle_root = player2.merkle_root;
         }

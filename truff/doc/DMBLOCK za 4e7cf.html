@@ -1,0 +1,711 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>DMBLOCK zadanie 2</title><style>
+/* cspell:disable-file */
+/* webkit printing magic: print all background colors */
+html {
+	-webkit-print-color-adjust: exact;
+}
+* {
+	box-sizing: border-box;
+	-webkit-print-color-adjust: exact;
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+}
+@media only screen {
+	body {
+		margin: 2em auto;
+		max-width: 900px;
+		color: rgb(55, 53, 47);
+	}
+}
+
+body {
+	line-height: 1.5;
+	white-space: pre-wrap;
+}
+
+a,
+a.visited {
+	color: inherit;
+	text-decoration: underline;
+}
+
+.pdf-relative-link-path {
+	font-size: 80%;
+	color: #444;
+}
+
+h1,
+h2,
+h3 {
+	letter-spacing: -0.01em;
+	line-height: 1.2;
+	font-weight: 600;
+	margin-bottom: 0;
+}
+
+.page-title {
+	font-size: 2.5rem;
+	font-weight: 700;
+	margin-top: 0;
+	margin-bottom: 0.75em;
+}
+
+h1 {
+	font-size: 1.875rem;
+	margin-top: 1.875rem;
+}
+
+h2 {
+	font-size: 1.5rem;
+	margin-top: 1.5rem;
+}
+
+h3 {
+	font-size: 1.25rem;
+	margin-top: 1.25rem;
+}
+
+.source {
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	padding: 1.5em;
+	word-break: break-all;
+}
+
+.callout {
+	border-radius: 3px;
+	padding: 1rem;
+}
+
+figure {
+	margin: 1.25em 0;
+	page-break-inside: avoid;
+}
+
+figcaption {
+	opacity: 0.5;
+	font-size: 85%;
+	margin-top: 0.5em;
+}
+
+mark {
+	background-color: transparent;
+}
+
+.indented {
+	padding-left: 1.5em;
+}
+
+hr {
+	background: transparent;
+	display: block;
+	width: 100%;
+	height: 1px;
+	visibility: visible;
+	border: none;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+img {
+	max-width: 100%;
+}
+
+@media only print {
+	img {
+		max-height: 100vh;
+		object-fit: contain;
+	}
+}
+
+@page {
+	margin: 1in;
+}
+
+.collection-content {
+	font-size: 0.875rem;
+}
+
+.column-list {
+	display: flex;
+	justify-content: space-between;
+}
+
+.column {
+	padding: 0 1em;
+}
+
+.column:first-child {
+	padding-left: 0;
+}
+
+.column:last-child {
+	padding-right: 0;
+}
+
+.table_of_contents-item {
+	display: block;
+	font-size: 0.875rem;
+	line-height: 1.3;
+	padding: 0.125rem;
+}
+
+.table_of_contents-indent-1 {
+	margin-left: 1.5rem;
+}
+
+.table_of_contents-indent-2 {
+	margin-left: 3rem;
+}
+
+.table_of_contents-indent-3 {
+	margin-left: 4.5rem;
+}
+
+.table_of_contents-link {
+	text-decoration: none;
+	opacity: 0.7;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.18);
+}
+
+table,
+th,
+td {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+	border-collapse: collapse;
+}
+
+table {
+	border-left: none;
+	border-right: none;
+}
+
+th,
+td {
+	font-weight: normal;
+	padding: 0.25em 0.5em;
+	line-height: 1.5;
+	min-height: 1.5em;
+	text-align: left;
+}
+
+th {
+	color: rgba(55, 53, 47, 0.6);
+}
+
+ol,
+ul {
+	margin: 0;
+	margin-block-start: 0.6em;
+	margin-block-end: 0.6em;
+}
+
+li > ol:first-child,
+li > ul:first-child {
+	margin-block-start: 0.6em;
+}
+
+ul > li {
+	list-style: disc;
+}
+
+ul.to-do-list {
+	text-indent: -1.7em;
+}
+
+ul.to-do-list > li {
+	list-style: none;
+}
+
+.to-do-children-checked {
+	text-decoration: line-through;
+	opacity: 0.375;
+}
+
+ul.toggle > li {
+	list-style: none;
+}
+
+ul {
+	padding-inline-start: 1.7em;
+}
+
+ul > li {
+	padding-left: 0.1em;
+}
+
+ol {
+	padding-inline-start: 1.6em;
+}
+
+ol > li {
+	padding-left: 0.2em;
+}
+
+.mono ol {
+	padding-inline-start: 2em;
+}
+
+.mono ol > li {
+	text-indent: -0.4em;
+}
+
+.toggle {
+	padding-inline-start: 0em;
+	list-style-type: none;
+}
+
+/* Indent toggle children */
+.toggle > li > details {
+	padding-left: 1.7em;
+}
+
+.toggle > li > details > summary {
+	margin-left: -1.1em;
+}
+
+.selected-value {
+	display: inline-block;
+	padding: 0 0.5em;
+	background: rgba(206, 205, 202, 0.5);
+	border-radius: 3px;
+	margin-right: 0.5em;
+	margin-top: 0.3em;
+	margin-bottom: 0.3em;
+	white-space: nowrap;
+}
+
+.collection-title {
+	display: inline-block;
+	margin-right: 1em;
+}
+
+.simple-table {
+	margin-top: 1em;
+	font-size: 0.875rem;
+	empty-cells: show;
+}
+.simple-table td {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table th {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table-header-color {
+	background: rgb(247, 246, 243);
+	color: black;
+}
+.simple-table-header {
+	font-weight: 500;
+}
+
+time {
+	opacity: 0.5;
+}
+
+.icon {
+	display: inline-block;
+	max-width: 1.2em;
+	max-height: 1.2em;
+	text-decoration: none;
+	vertical-align: text-bottom;
+	margin-right: 0.5em;
+}
+
+img.icon {
+	border-radius: 3px;
+}
+
+.user-icon {
+	width: 1.5em;
+	height: 1.5em;
+	border-radius: 100%;
+	margin-right: 0.5rem;
+}
+
+.user-icon-inner {
+	font-size: 0.8em;
+}
+
+.text-icon {
+	border: 1px solid #000;
+	text-align: center;
+}
+
+.page-cover-image {
+	display: block;
+	object-fit: cover;
+	width: 100%;
+	max-height: 30vh;
+}
+
+.page-header-icon {
+	font-size: 3rem;
+	margin-bottom: 1rem;
+}
+
+.page-header-icon-with-cover {
+	margin-top: -0.72em;
+	margin-left: 0.07em;
+}
+
+.page-header-icon img {
+	border-radius: 3px;
+}
+
+.link-to-page {
+	margin: 1em 0;
+	padding: 0;
+	border: none;
+	font-weight: 500;
+}
+
+p > .user {
+	opacity: 0.5;
+}
+
+td > .user,
+td > time {
+	white-space: nowrap;
+}
+
+input[type="checkbox"] {
+	transform: scale(1.5);
+	margin-right: 0.6em;
+	vertical-align: middle;
+}
+
+p {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+.image {
+	border: none;
+	margin: 1.5em 0;
+	padding: 0;
+	border-radius: 0;
+	text-align: center;
+}
+
+.code,
+code {
+	background: rgba(135, 131, 120, 0.15);
+	border-radius: 3px;
+	padding: 0.2em 0.4em;
+	border-radius: 3px;
+	font-size: 85%;
+	tab-size: 2;
+}
+
+code {
+	color: #eb5757;
+}
+
+.code {
+	padding: 1.5em 1em;
+}
+
+.code-wrap {
+	white-space: pre-wrap;
+	word-break: break-all;
+}
+
+.code > code {
+	background: none;
+	padding: 0;
+	font-size: 100%;
+	color: inherit;
+}
+
+blockquote {
+	font-size: 1.25em;
+	margin: 1em 0;
+	padding-left: 1em;
+	border-left: 3px solid rgb(55, 53, 47);
+}
+
+.bookmark {
+	text-decoration: none;
+	max-height: 8em;
+	padding: 0;
+	display: flex;
+	width: 100%;
+	align-items: stretch;
+}
+
+.bookmark-title {
+	font-size: 0.85em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	height: 1.75em;
+	white-space: nowrap;
+}
+
+.bookmark-text {
+	display: flex;
+	flex-direction: column;
+}
+
+.bookmark-info {
+	flex: 4 1 180px;
+	padding: 12px 14px 14px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.bookmark-image {
+	width: 33%;
+	flex: 1 1 180px;
+	display: block;
+	position: relative;
+	object-fit: cover;
+	border-radius: 1px;
+}
+
+.bookmark-description {
+	color: rgba(55, 53, 47, 0.6);
+	font-size: 0.75em;
+	overflow: hidden;
+	max-height: 4.5em;
+	word-break: break-word;
+}
+
+.bookmark-href {
+	font-size: 0.75em;
+	margin-top: 0.25em;
+}
+
+.sans { font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol"; }
+.code { font-family: "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace; }
+.serif { font-family: Lyon-Text, Georgia, ui-serif, serif; }
+.mono { font-family: iawriter-mono, Nitti, Menlo, Courier, monospace; }
+.pdf .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK JP'; }
+.pdf:lang(zh-CN) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC'; }
+.pdf:lang(zh-TW) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK TC'; }
+.pdf:lang(ko-KR) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK KR'; }
+.pdf .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.pdf .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK JP'; }
+.pdf:lang(zh-CN) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK SC'; }
+.pdf:lang(zh-TW) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK TC'; }
+.pdf:lang(ko-KR) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK KR'; }
+.pdf .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.highlight-default {
+	color: rgba(55, 53, 47, 1);
+}
+.highlight-gray {
+	color: rgba(120, 119, 116, 1);
+	fill: rgba(120, 119, 116, 1);
+}
+.highlight-brown {
+	color: rgba(159, 107, 83, 1);
+	fill: rgba(159, 107, 83, 1);
+}
+.highlight-orange {
+	color: rgba(217, 115, 13, 1);
+	fill: rgba(217, 115, 13, 1);
+}
+.highlight-yellow {
+	color: rgba(203, 145, 47, 1);
+	fill: rgba(203, 145, 47, 1);
+}
+.highlight-teal {
+	color: rgba(68, 131, 97, 1);
+	fill: rgba(68, 131, 97, 1);
+}
+.highlight-blue {
+	color: rgba(51, 126, 169, 1);
+	fill: rgba(51, 126, 169, 1);
+}
+.highlight-purple {
+	color: rgba(144, 101, 176, 1);
+	fill: rgba(144, 101, 176, 1);
+}
+.highlight-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.highlight-red {
+	color: rgba(212, 76, 71, 1);
+	fill: rgba(212, 76, 71, 1);
+}
+.highlight-gray_background {
+	background: rgba(241, 241, 239, 1);
+}
+.highlight-brown_background {
+	background: rgba(244, 238, 238, 1);
+}
+.highlight-orange_background {
+	background: rgba(251, 236, 221, 1);
+}
+.highlight-yellow_background {
+	background: rgba(251, 243, 219, 1);
+}
+.highlight-teal_background {
+	background: rgba(237, 243, 236, 1);
+}
+.highlight-blue_background {
+	background: rgba(231, 243, 248, 1);
+}
+.highlight-purple_background {
+	background: rgba(244, 240, 247, 0.8);
+}
+.highlight-pink_background {
+	background: rgba(249, 238, 243, 0.8);
+}
+.highlight-red_background {
+	background: rgba(253, 235, 236, 1);
+}
+.block-color-default {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray {
+	color: rgba(120, 119, 116, 1);
+	fill: rgba(120, 119, 116, 1);
+}
+.block-color-brown {
+	color: rgba(159, 107, 83, 1);
+	fill: rgba(159, 107, 83, 1);
+}
+.block-color-orange {
+	color: rgba(217, 115, 13, 1);
+	fill: rgba(217, 115, 13, 1);
+}
+.block-color-yellow {
+	color: rgba(203, 145, 47, 1);
+	fill: rgba(203, 145, 47, 1);
+}
+.block-color-teal {
+	color: rgba(68, 131, 97, 1);
+	fill: rgba(68, 131, 97, 1);
+}
+.block-color-blue {
+	color: rgba(51, 126, 169, 1);
+	fill: rgba(51, 126, 169, 1);
+}
+.block-color-purple {
+	color: rgba(144, 101, 176, 1);
+	fill: rgba(144, 101, 176, 1);
+}
+.block-color-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.block-color-red {
+	color: rgba(212, 76, 71, 1);
+	fill: rgba(212, 76, 71, 1);
+}
+.block-color-gray_background {
+	background: rgba(241, 241, 239, 1);
+}
+.block-color-brown_background {
+	background: rgba(244, 238, 238, 1);
+}
+.block-color-orange_background {
+	background: rgba(251, 236, 221, 1);
+}
+.block-color-yellow_background {
+	background: rgba(251, 243, 219, 1);
+}
+.block-color-teal_background {
+	background: rgba(237, 243, 236, 1);
+}
+.block-color-blue_background {
+	background: rgba(231, 243, 248, 1);
+}
+.block-color-purple_background {
+	background: rgba(244, 240, 247, 0.8);
+}
+.block-color-pink_background {
+	background: rgba(249, 238, 243, 0.8);
+}
+.block-color-red_background {
+	background: rgba(253, 235, 236, 1);
+}
+.select-value-color-pink { background-color: rgba(245, 224, 233, 1); }
+.select-value-color-purple { background-color: rgba(232, 222, 238, 1); }
+.select-value-color-green { background-color: rgba(219, 237, 219, 1); }
+.select-value-color-gray { background-color: rgba(227, 226, 224, 1); }
+.select-value-color-opaquegray { background-color: rgba(255, 255, 255, 0.0375); }
+.select-value-color-orange { background-color: rgba(250, 222, 201, 1); }
+.select-value-color-brown { background-color: rgba(238, 224, 218, 1); }
+.select-value-color-red { background-color: rgba(255, 226, 221, 1); }
+.select-value-color-yellow { background-color: rgba(253, 236, 200, 1); }
+.select-value-color-blue { background-color: rgba(211, 229, 239, 1); }
+
+.checkbox {
+	display: inline-flex;
+	vertical-align: text-bottom;
+	width: 16;
+	height: 16;
+	background-size: 16px;
+	margin-left: 2px;
+	margin-right: 5px;
+}
+
+.checkbox-on {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20width%3D%2216%22%20height%3D%2216%22%20fill%3D%22%2358A9D7%22%2F%3E%0A%3Cpath%20d%3D%22M6.71429%2012.2852L14%204.9995L12.7143%203.71436L6.71429%209.71378L3.28571%206.2831L2%207.57092L6.71429%2012.2852Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+
+.checkbox-off {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20x%3D%220.75%22%20y%3D%220.75%22%20width%3D%2214.5%22%20height%3D%2214.5%22%20fill%3D%22white%22%20stroke%3D%22%2336352F%22%20stroke-width%3D%221.5%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+	
+</style></head><body><article id="b5999ab2-685e-43ee-92a9-912d4f7ab8b3" class="page sans"><header><h1 class="page-title">DMBLOCK zadanie 2</h1></header><div class="page-body"><hr id="acbdf2d9-a8ec-4c0c-ba0c-f67d50059986"/><blockquote id="113f583e-4a84-4210-b34e-2610ab5e606e" class=""><strong>Fakulta informatiky a informačných technológií Slovenskej technickej univerzity
+
+</strong>Predmet: Digitálne meny a Blockchain
+
+Zadanie 2 - Smart kontraktový systém pre námorné bitky
+
+Autor: Roman Bitarovský
+
+Cvičiaci: Viktor Valaštín
+
+11. 04. 2022</blockquote><hr id="8309fbf2-90a9-4a0b-a031-aee64e133e5f"/><h3 id="04e4ce36-43be-43d4-be64-f712347fca35" class="">Disclaimer</h3><p id="b816c3d9-3ca4-44a1-88a6-99e6d3ba5c80" class="">Uvedené ukážky kódu v tejto dokumentácii nemusia byť 100% zhodné a syntakticky správne s reálnym kódom a boli zjednodušené pre lepšiu čitateľnosť alebo z dôvodu formátovania.</p><p id="a4190939-7163-4e1b-a226-b18dedbf7b0b" class="">Funkčné kódy pre zadanie je možné nájsť v pribalených súboroch publikovaných spolu s touto dokumentáciou.</p><hr id="a4622456-2f65-406b-83f4-d7eb9fa214ea"/><h1 id="8f2613fa-9dd4-48bf-97aa-45ed15afe32a" class="">Obsah</h1><nav id="6460cbbf-f1d1-4f7c-957b-c3f1ed61c9ef" class="block-color-gray table_of_contents"><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#04e4ce36-43be-43d4-be64-f712347fca35">Disclaimer</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#8f2613fa-9dd4-48bf-97aa-45ed15afe32a">Obsah</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#35fe0eb1-1790-4e1e-a52a-61bee4c6f1f5">Opis implementácie</a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#58b03531-e4a3-4b36-be45-96f69eff9db5">Smart contract</a></div><div class="table_of_contents-item table_of_contents-indent-2"><a class="table_of_contents-link" href="#a9b6b03e-1ab3-49dd-9935-27ded88e60b1">Základné atribúty contractu</a></div><div class="table_of_contents-item table_of_contents-indent-2"><a class="table_of_contents-link" href="#7df31293-27a2-4421-99b0-7bb0b1791f0d">Funkcia store_bid()</a></div><div class="table_of_contents-item table_of_contents-indent-2"><a class="table_of_contents-link" href="#32358507-aa59-480e-bdc4-ce959d338710">Funkcia clear_state()</a></div><div class="table_of_contents-item table_of_contents-indent-2"><a class="table_of_contents-link" href="#b8a3e95f-3f2b-4db9-b689-d98db7c20ac5">Funkcia store_board_commitment()</a></div><div class="table_of_contents-item table_of_contents-indent-2"><a class="table_of_contents-link" href="#a8fa8c78-97a8-4d04-a140-90180c7edf87">Funkcia check_one_ship()</a></div><div class="table_of_contents-item table_of_contents-indent-2"><a class="table_of_contents-link" href="#aae0d63c-9bf2-4ef4-972b-51a7ad2147c2">Funkcia claim_win()</a></div><div class="table_of_contents-item table_of_contents-indent-2"><a class="table_of_contents-link" href="#ab3373d1-db26-4a48-a012-d8e20ee224d2">Funkcia forfeit()</a></div><div class="table_of_contents-item table_of_contents-indent-2"><a class="table_of_contents-link" href="#6d583040-1794-4fe5-abf3-9df1c179a94d">Funkcia accuse_cheating()</a></div><div class="table_of_contents-item table_of_contents-indent-2"><a class="table_of_contents-link" href="#ad376202-169c-4c53-a18c-b23516620ac1">Funkcia claim_opponent_left()</a></div><div class="table_of_contents-item table_of_contents-indent-2"><a class="table_of_contents-link" href="#5cb923c0-7dba-4b4b-9abb-988221a11aca">Funkcia handle_timeout()</a></div><div class="table_of_contents-item table_of_contents-indent-2"><a class="table_of_contents-link" href="#d034c411-5895-42be-8d27-3b5463ba5084">Funkcia claim_timeout_winnings()</a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#fb0c8bd5-47d6-4bdd-9d15-1322702068ad">BattleshipPlayer.js</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#0b2b8d7f-61d4-4de2-8859-5fd7dde563eb">Testovanie</a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#6fccb099-404b-4c4a-82eb-99889c4282cb">JS testy</a></div><div class="table_of_contents-item table_of_contents-indent-2"><a class="table_of_contents-link" href="#85d4f603-82b9-403e-8d6e-76343699403c">1. test - Store_bids</a></div><div class="table_of_contents-item table_of_contents-indent-2"><a class="table_of_contents-link" href="#6e447ad0-f473-4478-9d3d-d0d92fca87cc">2. test - Clear_state</a></div><div class="table_of_contents-item table_of_contents-indent-2"><a class="table_of_contents-link" href="#c8599c98-171b-4306-944e-d5b8030814e4">3. test - Store_board_commitment</a></div><div class="table_of_contents-item table_of_contents-indent-2"><a class="table_of_contents-link" href="#d879adc4-30ee-4bea-b9d5-fea2244ca956">4. test - Forfeit</a></div><div class="table_of_contents-item table_of_contents-indent-2"><a class="table_of_contents-link" href="#686a1f7d-fb53-41a4-b319-064e3d984eb9">5. test - Timeout</a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#e9b09908-1a29-4728-86bb-b72d4c91e5e3">Test coverage</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#9775e906-2a2a-49a0-8b51-3d3b3a0ca961">Security analýza</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#1da3aca9-9bf5-4e18-b1fd-c0a7bc7e8988">Zodpovedanie otázok</a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#70bbb4f9-99a0-4fb1-b80e-ad01a0acedca">1. otázka</a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#c85d9a82-7832-425c-8a4d-4e74e46c306f">2. otázka</a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#f1a5efda-3d68-4536-9dff-49d0e8c6021a">3. otázka</a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#2769dd38-57bd-4acd-b9e4-d5356f154401">4. otázka</a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#6a8df590-efbd-44a7-b48c-5aaa92bb8468">5. otázka - spätná väzba </a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#2238f16d-eaeb-440f-b193-08831ad64c8b">Zhodnotenie</a></div></nav><h1 id="35fe0eb1-1790-4e1e-a52a-61bee4c6f1f5" class="">Opis implementácie</h1><h2 id="58b03531-e4a3-4b36-be45-96f69eff9db5" class="">Smart contract</h2><p id="36824fdb-bf3a-4b03-b2bd-886358be429e" class="">Smartcontract je napísaný v jazyku solidity spúšťaný na lokálnej kópie siete ethereum pomocou nástroju Ganache a Ganache-cli. Pri jeho vývoji boli využívané nástroje: <a href="https://remix.ethereum.org/">remix</a>, <a href="https://trufflesuite.com/docs/truffle/quickstart/">truffle</a> a VS code.</p><p id="6ef0a63f-cbb3-41cd-acb8-7c5d6a619993" class="">Potrebné importy: <a href="https://github.com/OpenZeppelin/openzeppelin-contracts/blob/release-v3.0.0/contracts/cryptography/ECDSA.sol">ECDSA.sol</a></p><p id="9e4cc35f-13ba-4afe-9add-9a5ec1bc8528" class="">Kompilátor: <code>pragma solidity &gt;=0.4.22 &lt;0.7.0;</code></p><h3 id="a9b6b03e-1ab3-49dd-9935-27ded88e60b1" class="">Základné atribúty contractu</h3><p id="e0211fa9-2e50-4409-bb06-f2a29507812f" class="">Pre implementáciu hry a reprezentovanie potrebných náležitosti je hráč reprezentovaný pomocou “objektu” čo v solidity predstavuje použitie kľúčového slova struct.</p><pre id="03855c95-c5ca-4fd5-a71c-cd0c042e4b18" class="code"><code>struct Player {
+    address addr;
+    bytes32 merkle_root;
+    uint32 num_ships;
+    uint256[] leaf_check;
+}</code></pre><p id="d175b498-071e-4bfb-abf5-00b869acf2c9" class="">Ďalšie stavy sú prezentované pomocou nasledovných premenných:</p><pre id="7e6e6117-177e-4689-a3b9-c56697061a6e" class="code"><code>// 0 -&gt; game not starte
+// 1 -&gt; game started and is in progress
+// 2 -&gt; game is over
+uint8 state = 0;
+uint256 public bid;
+uint public timeout_stamp;
+uint constant private _TIME_LIMIT = 1 minutes;
+address public winner;</code></pre><h3 id="7df31293-27a2-4421-99b0-7bb0b1791f0d" class="">Funkcia store_bid()</h3><p id="357a493b-9267-4fee-8111-87b7d235b082" class="">Uloží bid pre každého hráča. Zároveň zaeviduje dve unikátne adresy kt. predstavujú dvoch hráčov zúčastňujúcich sa danej hry. Funkcia ošetruje aby žiadny bid nebol menší ako nula nakoľko nechceme aby hráči hrali zadarmo. Ďalšie ošetrenia sú aby každý hráč mohol zaslať bid iba raz a aby mohli byť stávky vložené iba presne dvomi hráčmi.</p><p id="09a029d6-92e0-4ba6-9309-287cf7ed41cd" class="">V prípade ak sa druhý hráč pokúsi vložiť väčší bid ako prvý tento prevyšujúci rozdiel mu bude vrátený:</p><pre id="ee06e961-0c65-4581-afe3-6c13386bc72f" class="code"><code>else if (player2.addr == address(0)) {
+	// ak druhy hrac dal viac ako prvy rozdiel sa zuctuje spat
+  if (msg.value &gt; bid){
+      msg.sender.transfer(msg.value - bid);
+  }
+}</code></pre><h3 id="32358507-aa59-480e-bdc4-ce959d338710" class="">Funkcia clear_state()</h3><p id="5c2c8068-99e6-4405-b663-cec71d5ac040" class="">Tu je vhodné zdôrazniť, že funkcia je typu internal čo je logické vzhľadom nato, že resetuje atribúty contractu na znova nulové hodnoty.</p><p id="4722de8d-ac87-481a-8aa6-b6e8850218ed" class="">Funkcia znuluje atribúty pre oboch hráčov a ďalšie stavy ktoré si uchováva hra.</p><h3 id="b8a3e95f-3f2b-4db9-b689-d98db7c20ac5" class="">Funkcia store_board_commitment()</h3><p id="793543bc-2950-4671-b25b-139749c39a95" class="">Podľa adresy volajúceho danému hráčovi priradí merkle_root, kt. je parametrom funkcie. Samozrejme ošetruje aby s funkciou mohli interagovať iba hráči zúčastňujúci sa hry .</p><p id="a9e55a9a-1562-422d-9dcf-178f558375f6" class="">Ak obaja hráči majú nastavený ich počiatočný merkle root tak je zmenený stav hry reprezentovaný atribútom <code>state</code> tak aby bolo možné hru hrať.</p><h3 id="a8fa8c78-97a8-4d04-a140-90180c7edf87" class="">Funkcia check_one_ship()</h3><p id="62fb877a-06bc-4fed-a862-eafbdb11b40f" class="">Je najzložitejšia časť celej implementácie. Úlohou je kontrolovať koľko lodí hráči položili a aký počet lodí zasiahli súperovi.</p><pre id="f9cb75f3-e122-4cfc-befd-0b4f64563c1d" class="code"><code>if (owner == player1.addr) {
+    if (owner == msg.sender){
+        player1.num_ships += 1;
+    }
+    else {
+        player2.leaf_check.push(guess_leaf_index);
+    }        
+} 
+else {
+    if(owner == msg.sender){
+        player2.num_ships += 1;
+    }      
+    else {
+        player1.leaf_check.push(guess_leaf_index);
+    }       
+}</code></pre><p id="837e939e-721d-4561-abbc-5ec434a10cb9" class="">Samozrejme potrebné je aj kontrolovať či loď už nebola trafená nakoľko nie je možné jednu loď zarátať dvakrát.</p><h3 id="aae0d63c-9bf2-4ef4-972b-51a7ad2147c2" class="">Funkcia claim_win()</h3><p id="c3a065cd-90bc-4612-bd73-c425a22775f3" class="">V prípade ak hráč volajúci túto funkciu spĺňa požiadavky pre vyplatenie výhry (stávky, kt. obaja hráči vložili) mu je výhra prostredníctvom tejto funkcie bezodkladne vyplatená.</p><p id="f7cad3a1-348f-4861-9982-0a6bd56b2b54" class="">Funkcia zároveň emituje event o ukončení hry, aby sa vykonali potrebné zmeny na frontende.</p><h3 id="ab3373d1-db26-4a48-a012-d8e20ee224d2" class="">Funkcia forfeit()</h3><p id="cd044d2e-416c-41c1-8be5-586fcc125218" class="">Slúži ak sa chce jeden z hráčov vzdať, čo následne spôsobí vyplatenie výhry druhému hráčovi. Obsahuje ošetrenia aby funkciu mohli volať iba hráči zúčastňujúci sa aktuálnej hry a ďalšie aby napríklad nebolo možné vyplatiť výhru na neplatnú adresu či to, že nie je možné zavolať funkciu sám na seba resp. vzdať sa a zároveň dostať výhru.</p><h3 id="6d583040-1794-4fe5-abf3-9df1c179a94d" class="">Funkcia accuse_cheating()</h3><p id="c7aaca9b-eabe-40c8-95c8-0689df2e43d2" class="">Obvinenie protivníka z podvádzania. Pomocou merkle tree skontroluje, či oponujúci hráč nepodvádza a ak áno tak hráčovi, kt. nahlasoval podvádzanie je vyplatená výhra.</p><p id="74c0e836-d6b1-487f-a18a-681c8065173b" class="">Je ošetrené aby obviňovať z podvádzania mohli iba hráči zúčastňujúci sa hry a aby nebolo možné obviniť z podvádzania samého seba.</p><h3 id="ad376202-169c-4c53-a18c-b23516620ac1" class="">Funkcia claim_opponent_left()</h3><p id="d2ad9dfd-0e81-402f-9f64-dae9aa19d6d4" class="">Umožňuje obviniť oponenta zo zdržiavania. Vytvorí časovú pečiatku kedy bol oponent obvinený. A emituje event o tejto udalosti aby bol frontend schopný notifikovať oponenta, kt. má určitý čas na zareagovanie a zvrátenie tohto obvinenia.</p><h3 id="5cb923c0-7dba-4b4b-9abb-988221a11aca" class="">Funkcia handle_timeout()</h3><p id="dda50c19-82b0-4bbb-9daf-83a2e2318286" class="">Slúži obvinenému zo zdržiavania pre zvrátenie tejto udalosti. Kontroluje či hráč volaný túto funkciu je obvinený a ak zareaguje tak anuluje časovú pečiatku.</p><h3 id="d034c411-5895-42be-8d27-3b5463ba5084" class="">Funkcia claim_timeout_winnings()</h3><p id="9566d8ae-ebba-4a37-b5b9-888660d15516" class="">Zabezpečuje aby iba hráč, kt. druhého obvinil zo zdržiavania mohol dostať výhru v prípade, že od obvinenia uplynul stanovený čas.</p><h2 id="fb0c8bd5-47d6-4bdd-9d15-1322702068ad" class="">BattleshipPlayer.js</h2><p id="185d09f9-6f9c-4d49-bbff-7fb0196db4e9" class="">Túto časť projektu som neimplementoval ale v plnom rozsahu prebral z poskytnutého materiálu od Kika. Preto tu tento kód nebudem rozoberať.</p><h1 id="0b2b8d7f-61d4-4de2-8859-5fd7dde563eb" class="">Testovanie</h1><p id="c432bb57-2c73-43cc-99c2-ade932c0cac1" class="">Testovanie by som rozdelil na dve časti a to ručné testovanie predstavujúce hranie hry (plne funkčné) a následne pozorovanie výsledkov. A automatizované testovanie prostredníctvom vlastným JS testov spúšťaných pomocou <code>truffle test</code>.</p><h2 id="6fccb099-404b-4c4a-82eb-99889c4282cb" class="">JS testy</h2><figure id="4e7cf1a8-d08d-43b1-a818-462566c44fbd" class="image"><a href="DMBLOCK%20za%204e7cf/Untitled.png"><img style="width:816px" src="DMBLOCK%20za%204e7cf/Untitled.png"/></a></figure><h3 id="85d4f603-82b9-403e-8d6e-76343699403c" class="">1. test - Store_bids</h3><p id="b31c9c22-ca65-480b-aceb-92ef011c14c8" class="">V rámci prvého testu bolo preverené, či funkcia store_bids funguje správne, Teda bola využitá na uloženie bidov, kt. boli následne pomocou get funkcie porovnané so vkladanou hodnotou.</p><h3 id="6e447ad0-f473-4478-9d3d-d0d92fca87cc" class="">2. test - Clear_state</h3><p id="2c732336-ff7f-425a-b9b8-83f71cee4302" class="">V druhom teste bola vízia otestovať funkčnosť clear_state. táto funkcie je však internal a nevieme ju týmto spôsobom otestovať. Čo je logické nakoľko nie je prípustné aby bolo z vonku možné anulovať stavy conctractu. Preto sa test zameriava na to či volanie tejto funkcie vráti error.</p><h3 id="c8599c98-171b-4306-944e-d5b8030814e4" class="">3. test - Store_board_commitment</h3><p id="29279f02-c8db-468b-a0a7-eeb2182cceff" class="">Test funkcie store_board_commitment sa zameriava najskôr na uloženie pre oboch hráčov a následne porovnanie uloženej hodnoty prostredníctvom getu.</p><p id="25ec96d6-3bad-4bef-b278-ef6a670f8707" class="">Potom je pokus aby hráči uložili svoje hodnoty dvakrát po sebe čo však nie je možné.</p><p id="94a49a80-3060-44ac-a821-f72d143b4cb1" class="">Posledný scenár je kedy sa snaží stav uložiť hráč, kt. sa nezúčastňuje hry. </p><h3 id="d879adc4-30ee-4bea-b9d5-fea2244ca956" class="">4. test - Forfeit</h3><p id="c6c727ff-69ec-4600-a814-ade88110740b" class="">Je zameraný či po vzdaní sa budú znulované herné atribúty rovnako ako aj to či je prostredníctvom funkcie možné takto ukončiť hru za oponenta.</p><h3 id="686a1f7d-fb53-41a4-b319-064e3d984eb9" class="">5. test - Timeout</h3><p id="110c148f-ff44-4b1c-9d46-41014be96eeb" class="">V celku testuje funkčnosť troch funkcií zameraných na timeoutovanie.</p><p id="4a9fd60d-496c-427b-8c9c-7a69209ae826" class="">Prvý scenár predstavuje obvinenie protivníka zo zdržiavania a jeho následná pravdivosť, teda protivník neodpovie.</p><p id="57fa983f-9200-4e15-ade9-c09c6be90c67" class="">Druhý scenár testuje funkčnosť kedy súper poprie obvinenie zo zdržiavania.</p><h2 id="e9b09908-1a29-4728-86bb-b72d4c91e5e3" class="">Test coverage</h2><p id="840d9158-786f-4def-8c7f-551257ccac6c" class="">Vyhodnotenie pomocou nástroja <a href="https://github.com/sc-forks/solidity-coverage">solidity-coverage</a>.</p><figure id="160ab995-0609-435d-b38a-4c47685fa412" class="image"><a href="DMBLOCK%20za%204e7cf/Untitled%201.png"><img style="width:1135px" src="DMBLOCK%20za%204e7cf/Untitled%201.png"/></a></figure><h1 id="9775e906-2a2a-49a0-8b51-3d3b3a0ca961" class="">Security analýza</h1><p id="2c40c273-5173-4ffe-bf79-c33e319b3903" class="">Čo sa týka automatizovanej security analýzy použil nástroj <a href="https://mythril-classic.readthedocs.io/en/master/security-analysis.html">Mythril</a>.</p><p id="5ec31eeb-222a-4fb4-9dd7-11c6999a3e7d" class="">Táto analýza však neukázala žiadne chyby ani odporúčania pre zlepšenie.</p><figure id="b772bf6e-dfcb-4c2b-bce8-c9208484340e" class="image"><a href="DMBLOCK%20za%204e7cf/Untitled%202.png"><img style="width:1200px" src="DMBLOCK%20za%204e7cf/Untitled%202.png"/></a></figure><h1 id="1da3aca9-9bf5-4e18-b1fd-c0a7bc7e8988" class="">Zodpovedanie otázok</h1><h3 id="70bbb4f9-99a0-4fb1-b80e-ad01a0acedca" class="">1. otázka</h3><p id="11f8edf9-8a14-4939-9f7f-cc99106d809d" class=""><em>Predpokladajme, že hráč 1 umiestni na hraciu plochu menej ako 10 lodí, ale nikdy neklame o zásahoch alebo minutiach. Môže hráč 2 dostať svoje peniaze späť? Prečo áno, prečo nie?</em></p><p id="15ce9437-7445-4f5e-ba0c-022ea8bc78ce" class="">Podľa zadania by nemal nakoľko je písané, pri kontrole nároku na výhru sa kontroluje či má 10 zásahov súperových lodí ale aj to či položil 10 lodí.</p><p id="90f2356f-8c08-4b36-a4ee-d6d94c819bc9" class="">Avšak ak sa súper vzdá prípadne sa mu poradí súpera usvedčiť zo zdržiavania tak môže vyhrať a dostať výhru.</p><h3 id="c85d9a82-7832-425c-8a4d-4e74e46c306f" class="">2. otázka</h3><p id="70a2929d-5d46-42db-a808-d74a4699d7d7" class=""><em>Prečo neobmedzujeme hráčov v umiestňovaní viac ako 10 lodí na ich dosku?</em></p><p id="02004c35-4097-41aa-bd1e-9e66d54f868b" class="">Ak hráč položí na dosku viac lodí tak tým pomáha súperovi, čo samozrejme robiť nechceme nakoľko sa hrá o cennú výhru. Teda týmto krokom nepomáha sebe ale strane druhej.</p><h3 id="f1a5efda-3d68-4536-9dff-49d0e8c6021a" class="">3. otázka</h3><p id="775b8ec3-25bb-4fb9-bd1e-bf61daa4d40d" class=""><em>Nemáme mechanizmus, ktorý by hráča obviňoval z umiestnenia menej ako 10 lodí na hraciu plochu. Ako by ste ho vedeli implementovať?</em></p><p id="b15d4fe8-0d76-498b-938f-d683b7868c54" class="">Obaja hráči by si na začiatku hry museli uložiť dôkaz, že majú 10 lodí a musela by sa pridať funkcionalita aby mohol oponent tento dôkaz vyžiadať a nejakým spôsobom ho validovať aby bolo možné overiť, že nie je sfalšovaný.</p><h3 id="2769dd38-57bd-4acd-b9e4-d5356f154401" class="">4. otázka</h3><p id="fecbb5de-c311-40ca-a6c2-d4efa7797b02" class=""><em>Napadajú vám scenáre útoku alebo konkrétne zraniteľné miesta v niektorom z uvedených kódov, proti ktorým by ste sa nedokázali ubrániť?</em></p><p id="3b687ccc-c1d9-42a9-b201-4e0593711af4" class="">Ak napríklad hráč opustí hru nekorektne (zatvorenie prehliadača) daná odmena ostane zaseknutá v kontrakte a druhá strana tak stratí výhru aj keď na ňu má nárok (ak ho nenapadne nahlásiť protivníka za zdržiavanie), čo však ak aj druhý hráč zavrie prehliadač napríklad nechtiac. Toto sa však deje iba v našom prostredí a dá sa to ošetriť.</p><h3 id="6a8df590-efbd-44a7-b48c-5aaa92bb8468" class="">5. otázka - spätná väzba </h3><p id="f355eea9-1b15-40ca-8971-3296f751547c" class=""><em>Ako by sa dal v budúcnosti vylepšiť tento projekt?</em></p><p id="b4d12d96-9e8b-4e4d-a29f-55ad613b77c0" class="">Zrušil by som tú časť kedy majú študenti implementovať BattleshipPlayer.js. Dôvod je ten že mi to nepríde ako cieľom tohto zadania a vlastne ani predmetu. Iba to všetko skomplikovalo nakoľko bolo ťažké povedať, či mi aplikácia nefunguje kvôli chybnému JS alebo kvôli chybe v solidity.</p><h1 id="2238f16d-eaeb-440f-b193-08831ad64c8b" class="">Zhodnotenie</h1><p id="6432b813-ef65-4c95-a84b-3d4ae3d34dce" class="">Zadanie bolo pomerne zaujímavé a okrem cenných skúseností so solidity si odnášam aj skúseností s remixom, truffle a ďalšími tools, kt. rozbehanie dalo niekedy zabrať a vyžadovalo si podrobné skúmanie príslušnej dokumentácie. </p><p id="0d8de91d-6ec1-44e4-b459-5214792586fc" class="">Určite by sa s tým dalo ešte vyhrať avšak čas je neúprosný čo je celkom škoda.</p></div></article></body></html>
