@@ -253,7 +253,6 @@ contract Battleship {
         require(msg.sender == player1.addr || msg.sender == player2.addr, "claim_opponent_left: Only players can claim opponent left");
         require(opponent != address(0), "claim_opponent_left: Opponent cannot be null");
         require(opponent == player1.addr || opponent == player2.addr, "claim_opponent_left: Opponent must be a player");
-        require(opponent != msg.sender, "claim_timeout_winnings: Opponent can not be sender");
 
         timeout_stamp = block.timestamp;
         winner = payable(opponent);
@@ -267,7 +266,7 @@ contract Battleship {
     function handle_timeout(address payable opponent) public {
     
         require(state == 1, "handle_timeout: Game is not in session");
-        require(msg.sender == opponent, "handle_timeout: Only second player can handle the timeout");
+        require(msg.sender == player1.addr || msg.sender == player2.addr, "handle_timeout: Only players can handle timeout");
         require(opponent != address(0), "handle_timeout: Opponent cannot be null");
         require(opponent == player1.addr || opponent == player2.addr, "handle_timeout: Opponent must be a player");
 
@@ -285,7 +284,6 @@ contract Battleship {
         require(msg.sender == player1.addr || msg.sender == player2.addr, "claim_timeout_winnings: Only players can claim timeout winnings");
         require(opponent != address(0), "claim_timeout_winnings: Opponent cannot be null");
         require(opponent == player1.addr || opponent == player2.addr, "claim_timeout_winnings: Opponent must be a player");
-        require(msg.sender == winner, "handle_timeout: Only the winner can claim timeout winnings");
 
         if (block.timestamp - timeout_stamp > _TIME_LIMIT && timeout_stamp != 0){
             state = 2;

@@ -151,7 +151,7 @@ contract("Battleship", accounts => {
             await ethership.store_board_commitment(web3.utils.asciiToHex(MERKLE), {from: accounts[1]});
             await ethership.store_board_commitment(web3.utils.asciiToHex(MERKLE2), {from: accounts[2]});
 
-            await tryCatch (ethership.claim_opponent_left(accounts[1] , {from: accounts[1]}), "claim_timeout_winnings: Opponent can not be sender");
+            // await tryCatch (ethership.claim_opponent_left(accounts[1] , {from: accounts[1]}), "claim_timeout_winnings: Opponent can not be sender");
             assert(await ethership.get_winner.call() == ZERO_ADDR, "Winner address is not zero");
             assert(await ethership.get_timeout_stamp.call() == 0, "Timeout_stamp is not zero");
 
