@@ -4,8 +4,10 @@
     "test": "truffle test"
   },
   "dependencies": {
+    "ethereumjs-testrpc": "^6.0.3",
     "ganache-cli": "^6.12.2",
-    "web3": "^1.7.1"
+    "solc": "^0.8.13",
+    "web3": "^1.7.3"
   },
   "devDependencies": {
     "chai": "^4.3.6",

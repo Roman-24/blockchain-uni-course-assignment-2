@@ -26,7 +26,7 @@ contract Battleship {
     // 1 -> game started and is in progress
     // 2 -> game is over
     uint8 state = 0;
-    uint256 public bit;
+    uint256 public bid;
     uint public timeout_stamp;
     uint constant private _TIME_LIMIT = 1 minutes;
     address public winner;
@@ -61,18 +61,18 @@ contract Battleship {
             // teoreticky by mohli hrat aj o nula ETH ale to nechceme
             require(msg.value > 0, "store_bid: Bid must be positive");
             player1.addr = msg.sender;
-            bit = msg.value;
+            bid = msg.value;
 
         } else if (player2.addr == address(0)) {
-            require(msg.value >= bit && msg.value >= 0, "store_bid: Bid must be greater or equivalent than previous bid");
+            require(msg.value >= bid && msg.value >= 0, "store_bid: Bid must be greater or equivalent than previous bid");
             require(msg.sender != player1.addr, "store_bid: Player cannot bid on their own bid");
             player2.addr = msg.sender;
 
             // ak druhy hrac dal viac ako prvy rozdiel sa zuctuje spat
-            if (msg.value > bit){
-                msg.sender.transfer(msg.value - bit);
+            if (msg.value > bid){
+                msg.sender.transfer(msg.value - bid);
             }
-            bit = address(this).balance;
+            bid = address(this).balance;
         }
     }
 
@@ -91,7 +91,7 @@ contract Battleship {
         player2.num_ships = 0;
         delete player2.leaf_check;
 
-        bit = 0;
+        bid = 0;
         state = 0;
         timeout_stamp = 0;
         winner = address(0);    
@@ -285,6 +285,7 @@ contract Battleship {
         require(msg.sender == player1.addr || msg.sender == player2.addr, "claim_timeout_winnings: Only players can claim timeout winnings");
         require(opponent != address(0), "claim_timeout_winnings: Opponent cannot be null");
         require(opponent == player1.addr || opponent == player2.addr, "claim_timeout_winnings: Opponent must be a player");
+        require(msg.sender == winner, "handle_timeout: Only the winner can claim timeout winnings");
 
         if (block.timestamp - timeout_stamp > _TIME_LIMIT && timeout_stamp != 0){
             state = 2;
@@ -381,9 +382,9 @@ contract Battleship {
     function get_state() public view returns (uint) {
         return state;
     }
-    // get bit
-    function get_bit() public view returns (uint256) {
-        return bit;
+    // get bid
+    function get_bid() public view returns (uint256) {
+        return bid;
     }
     // get timeout_stamp
     function get_timeout_stamp() public view returns (uint) {

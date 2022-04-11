@@ -23,7 +23,7 @@ contract("Battleship", accounts => {
             
             assert(await ethership.get_player1_addr.call() == accounts[1], "Player 1 address not stored correctly");
             assert(await ethership.get_player2_addr.call() == ZERO_ADDR, "Player 2 address not stored correctly");
-            assert(await ethership.get_bit.call() == BID, "BID value not stored correctly");
+            assert(await ethership.get_bid.call() == BID, "BID value not stored correctly");
 
         }).timeout(TIMER);
 
@@ -34,7 +34,7 @@ contract("Battleship", accounts => {
 
             assert(await ethership.get_player1_addr.call() == accounts[1], "Player 1 address not stored correctly");
             assert(await ethership.get_player2_addr.call() == accounts[2], "Player 2 address not stored correctly");
-            assert(await ethership.get_bit.call() == BID*2, "BID value not stored correctly");
+            assert(await ethership.get_bid.call() == BID*2, "BID value not stored correctly");
 
         }).timeout(TIMER);
     });
@@ -109,7 +109,7 @@ contract("Battleship", accounts => {
             assert(await ethership.is_game_over.call(), "Game not end as was predicted");
             assert(await ethership.get_player1_addr.call() == ZERO_ADDR, "Player 1 address not zero");
             assert(await ethership.get_player2_addr.call() == ZERO_ADDR, "Player 2 address not zero");
-            assert(await ethership.get_bit.call() == 0, "BID value not zero");
+            assert(await ethership.get_bid.call() == 0, "BID value not zero");
             assert(await ethership.get_state.call() == 0, "BID value not zero");
 
         }).timeout(TIMER);
@@ -172,7 +172,7 @@ contract("Battleship", accounts => {
             assert(await ethership.get_player1_addr.call() == accounts[1], "Player 1 address not stored correctly");
             assert(await ethership.get_player2_addr.call() == accounts[2], "Player 2 address not stored correctly");
             assert(await ethership.get_timeout_stamp.call() == 0, "Timeout_stamp is not zero");
-            assert(await ethership.get_bit.call() == BID*2, "BID value not stored correctly");
+            assert(await ethership.get_bid.call() == BID*2, "BID value not stored correctly");
 
         }).timeout(TIMER);
 
@@ -193,7 +193,7 @@ contract("Battleship", accounts => {
 
             assert(await ethership.get_player1_addr.call() == ZERO_ADDR, "Player 1 address not zero");
             assert(await ethership.get_player2_addr.call() == ZERO_ADDR, "Player 2 address not zero");
-            assert(await ethership.get_bit.call() == 0, "BID value not zero");
+            assert(await ethership.get_bid.call() == 0, "BID value not zero");
 
         }).timeout(TIMER);
 
