@@ -14,86 +14,6 @@ let web3 = new Web3(Web3.givenProvider || "ws://localhost:7545");
 // ============================================================
 var abi = [
 	{
-		"inputs": [
-			{
-				"internalType": "bytes",
-				"name": "opening_nonce",
-				"type": "bytes"
-			},
-			{
-				"internalType": "bytes32[]",
-				"name": "proof",
-				"type": "bytes32[]"
-			},
-			{
-				"internalType": "uint256",
-				"name": "guess_leaf_index",
-				"type": "uint256"
-			},
-			{
-				"internalType": "address",
-				"name": "owner",
-				"type": "address"
-			}
-		],
-		"name": "accuse_cheating",
-		"outputs": [
-			{
-				"internalType": "bool",
-				"name": "result",
-				"type": "bool"
-			}
-		],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "opponent",
-				"type": "address"
-			}
-		],
-		"name": "claim_opponent_left",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "opponent",
-				"type": "address"
-			}
-		],
-		"name": "claim_timeout_winnings",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "claim_win",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address payable",
-				"name": "opponent",
-				"type": "address"
-			}
-		],
-		"name": "forfeit",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
 		"anonymous": false,
 		"inputs": [
 			{
@@ -105,66 +25,6 @@ var abi = [
 		],
 		"name": "GameOver",
 		"type": "event"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address payable",
-				"name": "opponent",
-				"type": "address"
-			}
-		],
-		"name": "handle_timeout",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "bytes",
-				"name": "opening_nonce",
-				"type": "bytes"
-			},
-			{
-				"internalType": "bytes32[]",
-				"name": "proof",
-				"type": "bytes32[]"
-			},
-			{
-				"internalType": "uint256",
-				"name": "guess_leaf_index",
-				"type": "uint256"
-			},
-			{
-				"internalType": "address",
-				"name": "owner",
-				"type": "address"
-			}
-		],
-		"name": "check_one_ship",
-		"outputs": [
-			{
-				"internalType": "bool",
-				"name": "result",
-				"type": "bool"
-			}
-		],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "is_game_over",
-		"outputs": [
-			{
-				"internalType": "bool",
-				"name": "",
-				"type": "bool"
-			}
-		],
-		"stateMutability": "nonpayable",
-		"type": "function"
 	},
 	{
 		"anonymous": false,
@@ -243,22 +103,36 @@ var abi = [
 		"type": "event"
 	},
 	{
-		"inputs": [],
-		"name": "store_bid",
-		"outputs": [],
-		"stateMutability": "payable",
-		"type": "function"
-	},
-	{
 		"inputs": [
 			{
-				"internalType": "bytes32",
-				"name": "merkle_root",
-				"type": "bytes32"
+				"internalType": "bytes",
+				"name": "opening_nonce",
+				"type": "bytes"
+			},
+			{
+				"internalType": "bytes32[]",
+				"name": "proof",
+				"type": "bytes32[]"
+			},
+			{
+				"internalType": "uint256",
+				"name": "guess_leaf_index",
+				"type": "uint256"
+			},
+			{
+				"internalType": "address",
+				"name": "owner",
+				"type": "address"
 			}
 		],
-		"name": "store_board_commitment",
-		"outputs": [],
+		"name": "accuse_cheating",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "result",
+				"type": "bool"
+			}
+		],
 		"stateMutability": "nonpayable",
 		"type": "function"
 	},
@@ -273,6 +147,268 @@ var abi = [
 			}
 		],
 		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "bytes",
+				"name": "opening_nonce",
+				"type": "bytes"
+			},
+			{
+				"internalType": "bytes32[]",
+				"name": "proof",
+				"type": "bytes32[]"
+			},
+			{
+				"internalType": "uint256",
+				"name": "guess_leaf_index",
+				"type": "uint256"
+			},
+			{
+				"internalType": "address",
+				"name": "owner",
+				"type": "address"
+			}
+		],
+		"name": "check_one_ship",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "result",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "opponent",
+				"type": "address"
+			}
+		],
+		"name": "claim_opponent_left",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "opponent",
+				"type": "address"
+			}
+		],
+		"name": "claim_timeout_winnings",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "claim_win",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address payable",
+				"name": "opponent",
+				"type": "address"
+			}
+		],
+		"name": "forfeit",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "get_bit",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "get_player1_addr",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "get_player1_leaf_check",
+		"outputs": [
+			{
+				"internalType": "uint256[]",
+				"name": "",
+				"type": "uint256[]"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "get_player1_merkle_root",
+		"outputs": [
+			{
+				"internalType": "bytes32",
+				"name": "",
+				"type": "bytes32"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "get_player1_num_ships",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "get_player2_addr",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "get_player2_leaf_check",
+		"outputs": [
+			{
+				"internalType": "uint256[]",
+				"name": "",
+				"type": "uint256[]"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "get_player2_merkle_root",
+		"outputs": [
+			{
+				"internalType": "bytes32",
+				"name": "",
+				"type": "bytes32"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "get_player2_num_ships",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "get_state",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "get_timeout_stamp",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "get_winner",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address payable",
+				"name": "opponent",
+				"type": "address"
+			}
+		],
+		"name": "handle_timeout",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "is_game_over",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
@@ -297,6 +433,26 @@ var abi = [
 			}
 		],
 		"stateMutability": "pure",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "store_bid",
+		"outputs": [],
+		"stateMutability": "payable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "bytes32",
+				"name": "merkle_root",
+				"type": "bytes32"
+			}
+		],
+		"name": "store_board_commitment",
+		"outputs": [],
+		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
@@ -365,7 +521,7 @@ abiDecoder.addABI(abi);
 
 // This is the address of the contract you want to connect to; copy this from Remix
 // TODO: fill this in with your contract's address/hash
-let contractAddress = "0x0a526aE7b110B51149F35e6EBdbacD74f85a7e49";
+let contractAddress = "0xd00a66C1454ce4E70c33D4cb8A74DbD3109f613d";
 
 // Reads in the ABI
 var Battleship = new web3.eth.Contract(abi, contractAddress);
@@ -568,7 +724,7 @@ class BattleshipPlayer {
     this.opening_nonce = web3.utils.fromAscii(JSON.stringify(opening) + JSON.stringify(nonce));
     if (opening) {
       this.hits += 1;
-      Battleship.methods.check_one_ship(this.opening_nonce, this.proof, this.index, this.opp_addr).send({ from: this.my_addr });
+      Battleship.methods.check_one_ship(this.opening_nonce, this.proof, this.index, this.opp_addr).send({ from: this.my_addr, gas: GAS_PRICE });
     }
   }
 

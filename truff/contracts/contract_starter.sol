@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity >=0.4.22 <0.7.0;
 
+//import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/release-v3.0.0/contracts/cryptography/ECDSA.sol";
 import "./ECDSA.sol";
 
 contract Battleship {
@@ -50,9 +51,9 @@ contract Battleship {
         require(player1.addr == address(0) || player2.addr == address(0), "store_bid: Game already started");
 
         // clearnutie states pred zaziatkom kazdej hry aby neostala vysiet rozohrata hra
-        if (player1.addr != address(0) && player2.addr != address(0)){
+        /*if (player1.addr != address(0) && player2.addr != address(0)){
             clear_state();
-        }
+        }*/
 
         require(state == 0, "store_bid: Game already started");
 
@@ -126,22 +127,28 @@ contract Battleship {
         require(state == 1, "check_one_ship: Game is not in session");
         require(msg.sender == player1.addr || msg.sender == player2.addr, "check_one_ship: Only players can check ships");
         require(owner == player1.addr || owner == player2.addr, "check_one_ship: Owner must be a player");
-        //require(guess_leaf_index < 2**BOARD_LEN, "check_one_ship: Guess leaf index out of bounds");
+        // require(guess_leaf_index < 2**BOARD_LEN, "check_one_ship: Guess leaf index out of bounds");
 
         
-        uint256 len = owner == player1.addr ? player1.leaf_check.length : player2.leaf_check.length;
+        // merkle root of owner and owner leaves
+        bytes32 owner_merkle_root = player1.merkle_root;
+        uint256[] storage leaves = player1.leaf_check;
+        if (player2.addr == owner) {
+            owner_merkle_root = player2.merkle_root;
+            leaves = player2.leaf_check;
+        }
 
-        if (verify_opening(opening_nonce, proof, guess_leaf_index, owner == player1.addr ? player1.merkle_root : player2.merkle_root)){
+        if (verify_opening(opening_nonce, proof, guess_leaf_index, owner_merkle_root)){
 
-            for (uint256 index = 0; index < len; index++) {
-                if ((owner == player1.addr ? player1.leaf_check[index] : player2.leaf_check[index]) == guess_leaf_index) {
+            for (uint256 index = 0; index < leaves.length; index++) {
+                if (leaves[index] == guess_leaf_index) {
                     return false;
                 }
             }
 
             if (owner == player1.addr) {
                 if (owner == msg.sender){
-                    player1.num_ships +=1;
+                    player1.num_ships += 1;
                 }
                 else {
                     player2.leaf_check.push(guess_leaf_index);
@@ -246,6 +253,7 @@ contract Battleship {
         require(msg.sender == player1.addr || msg.sender == player2.addr, "claim_opponent_left: Only players can claim opponent left");
         require(opponent != address(0), "claim_opponent_left: Opponent cannot be null");
         require(opponent == player1.addr || opponent == player2.addr, "claim_opponent_left: Opponent must be a player");
+        require(opponent != msg.sender, "claim_timeout_winnings: Opponent can not be sender");
 
         timeout_stamp = block.timestamp;
         winner = payable(opponent);
@@ -259,7 +267,7 @@ contract Battleship {
     function handle_timeout(address payable opponent) public {
     
         require(state == 1, "handle_timeout: Game is not in session");
-        require(msg.sender != winner, "handle_timeout: Only second player can handle the timeout");
+        require(msg.sender == opponent, "handle_timeout: Only second player can handle the timeout");
         require(opponent != address(0), "handle_timeout: Opponent cannot be null");
         require(opponent == player1.addr || opponent == player2.addr, "handle_timeout: Opponent must be a player");
 

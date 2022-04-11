@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity >=0.4.22 <0.7.0;
 
-import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/release-v3.0.0/contracts/cryptography/ECDSA.sol";
+// import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/release-v3.0.0/contracts/cryptography/ECDSA.sol";
+import "./ECDSA.sol";
 
 contract Battleship {
     using ECDSA for bytes32;
@@ -71,6 +72,7 @@ contract Battleship {
             if (msg.value > bit){
                 msg.sender.transfer(msg.value - bit);
             }
+            bit = address(this).balance;
         }
     }
 
@@ -340,4 +342,49 @@ contract Battleship {
         return (curr_commit == commit);
 
     }
+
+
+    // get player1
+    function get_player1_addr() public view returns (address) {
+        return player1.addr;
+    }
+    function get_player1_merkle_root() public view returns (bytes32) {
+        return player1.merkle_root;
+    }
+    function get_player1_num_ships() public view returns (uint) {
+        return player1.num_ships;
+    }
+    function get_player1_leaf_check() public view returns (uint256[] memory) {
+        return player1.leaf_check;
+    }
+    // get player2
+    function get_player2_addr() public view returns (address) {
+        return player2.addr;
+    }
+    function get_player2_merkle_root() public view returns (bytes32) {
+        return player2.merkle_root;
+    }
+    function get_player2_num_ships() public view returns (uint) {
+        return player2.num_ships;
+    }
+    function get_player2_leaf_check() public view returns (uint256[] memory) {
+        return player2.leaf_check;
+    }
+    // get state
+    function get_state() public view returns (uint) {
+        return state;
+    }
+    // get bit
+    function get_bit() public view returns (uint256) {
+        return bit;
+    }
+    // get timeout_stamp
+    function get_timeout_stamp() public view returns (uint) {
+        return timeout_stamp;
+    }
+    // get winner
+    function get_winner() public view returns (address) {
+        return winner;
+    }
+
 }
